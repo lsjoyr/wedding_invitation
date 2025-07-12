@@ -8,22 +8,51 @@ import gallery_img4 from './assets/g4.jpg'
 import './App.css'
 
 const originalImages = [gallery_img1, gallery_img2, gallery_img3, gallery_img4]
-
 const extendedImages = [
   originalImages[originalImages.length - 1],
   ...originalImages,
   originalImages[0],
 ]
 
+const threshold = 50
+
 function App() {
   const [index, setIndex] = useState(1)
+  const [dragStartX, setDragStartX] = useState<number | null>(null)
+  const [dragOffset, setDragOffset] = useState(0)
+  const [isTransitioning, setIsTransitioning] = useState(false)
   const trackRef = useRef<HTMLDivElement>(null)
 
+  const computedOffsetPercent = (dragOffset / window.innerWidth) * 100
+  const translateX = `translateX(calc(-${index * 85}% + 7.5% + ${computedOffsetPercent}%))`
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault()
+    setDragStartX(e.pageX)
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (dragStartX === null) return
+    const delta = e.pageX - dragStartX
+    setDragOffset(delta)
+  }
+
+  const handleMouseUp = () => {
+    if (dragOffset > threshold) {
+      goTo(index - 1)
+    } else if (dragOffset < -threshold) {
+      goTo(index + 1)
+    }
+    setDragStartX(null)
+    setDragOffset(0)
+  }
+
   const goTo = (newIndex: number) => {
-    if (!trackRef.current) return
+    if (!trackRef.current || isTransitioning) return
     const track = trackRef.current
 
     track.style.transition = 'transform 0.4s ease'
+    setIsTransitioning(true)
     setIndex(newIndex)
   }
 
@@ -31,12 +60,26 @@ function App() {
     const track = trackRef.current
     if (!track) return
 
+    setIsTransitioning(false)
+
     if (index === 0) {
       track.style.transition = 'none'
       setIndex(originalImages.length)
+
+      requestAnimationFrame(() => {
+        if (trackRef.current) {
+          trackRef.current.style.transform = `translateX(calc(-${originalImages.length * 85}% + 7.5%))`
+        }
+      })
     } else if (index === extendedImages.length - 1) {
       track.style.transition = 'none'
       setIndex(1)
+
+      requestAnimationFrame(() => {
+        if (trackRef.current) {
+          trackRef.current.style.transform = `translateX(calc(-85% + 7.5%))`
+        }
+      })
     }
   }
 
@@ -50,12 +93,20 @@ function App() {
       </div>
 
       <div className="slider-wrapper">
-        <button className="nav prev" onClick={() => goTo(index - 1)}>‹</button>
-        <div className="slider-track-container">
+        <div
+          className="slider-track-container"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        >
           <div
             className="slider-track"
             ref={trackRef}
-            style={{ transform: `translateX(calc(-${index * 85}% + 7.5%))` }}
+            style={{
+              transform: translateX,
+              transition: dragStartX === null ? 'transform 0.4s ease' : 'none',
+            }}
             onTransitionEnd={handleTransitionEnd}
           >
             {extendedImages.map((img, i) => (
@@ -65,7 +116,6 @@ function App() {
             ))}
           </div>
         </div>
-        <button className="nav next" onClick={() => goTo(index + 1)}>›</button>
       </div>
     </>
   )

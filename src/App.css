@@ -10,27 +10,29 @@ body {
 
 .slider-wrapper {
   position: relative;
-  width: 100%;  /* 가로 100% */
-  max-width: 800px;  /* 최대 너비 800px */
+  width: 100%;
+  max-width: 800px;
   margin: 0 auto;
   overflow: hidden;
+  user-select: none;
 }
 
 .slider-track-container {
   overflow: hidden;
   width: 100%;
-  padding: 0 7.5%;  /* 좌우 걸침 공간 확보 */
+  padding: 0 7.5%;
   box-sizing: border-box;
 }
 
 .slider-track {
   display: flex;
   transition: transform 0.4s ease;
+  will-change: transform;
 }
 
 .slide {
-  flex: 0 0 82%;      /* 슬라이드 너비 */
-  margin: 0 1.5%;     /* 좌우 마진 */
+  flex: 0 0 82%;
+  margin: 0 1.5%;
   box-sizing: border-box;
 }
 
@@ -39,25 +41,4 @@ body {
   height: auto;
   border-radius: 12px;
   display: block;
-}
-
-.nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 2.5rem;
-  background: rgba(255, 255, 255, 0.7);
-  border: none;
-  cursor: pointer;
-  padding: 4px 10px;
-  z-index: 1;
-  user-select: none;
-}
-
-.prev {
-  left: 5px;
-}
-
-.next {
-  right: 5px;
 }
