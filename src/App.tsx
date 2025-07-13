@@ -49,6 +49,27 @@ function App() {
     setDragOffset(0)
   }
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault()  // 🔹 기본 스크롤 막기
+    setDragStartX(e.touches[0].clientX)
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (dragStartX === null) return
+    const delta = e.touches[0].clientX - dragStartX
+    setDragOffset(delta)
+  }
+
+  const handleTouchEnd = () => {
+    if (dragOffset > threshold) {
+      goTo(index - 1)
+    } else if (dragOffset < -threshold) {
+      goTo(index + 1)
+    }
+    setDragStartX(null)
+    setDragOffset(0)
+  }
+
   const goTo = (newIndex: number) => {
     if (!trackRef.current || isTransitioning) return
     const track = trackRef.current
@@ -101,6 +122,9 @@ function App() {
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           <div
             className="slider-track"
