@@ -50,7 +50,7 @@ function App() {
   }
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    e.preventDefault()  // 🔹 기본 스크롤 막기
+    e.preventDefault()
     setDragStartX(e.touches[0].clientX)
   }
 
@@ -137,7 +137,12 @@ function App() {
           >
             {extendedImages.map((img, i) => (
               <div className="slide" key={i}>
-                <img src={img} alt={`slide-${i}`} />
+                <img
+                  src={img}
+                  alt={`slide-${i}`}
+                  draggable={false}
+                  onContextMenu={(e) => e.preventDefault()}
+                />
               </div>
             ))}
           </div>

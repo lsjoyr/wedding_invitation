@@ -41,4 +41,7 @@ body {
   height: auto;
   border-radius: 12px;
   display: block;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
