@@ -9,15 +9,17 @@ import './App.css'
 
 const originalImages = [gallery_img1, gallery_img2, gallery_img3, gallery_img4]
 const extendedImages = [
+  originalImages[originalImages.length - 2],
   originalImages[originalImages.length - 1],
   ...originalImages,
   originalImages[0],
+  originalImages[1],
 ]
 
 const threshold = 50
 
 function App() {
-  const [index, setIndex] = useState(1)
+  const [index, setIndex] = useState(2)
   const [dragStartX, setDragStartX] = useState<number | null>(null)
   const [dragOffset, setDragOffset] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
@@ -62,22 +64,22 @@ function App() {
 
     setIsTransitioning(false)
 
-    if (index === 0) {
+    if (index === 1) {
       track.style.transition = 'none'
-      setIndex(originalImages.length)
+      setIndex(originalImages.length + 1)
 
       requestAnimationFrame(() => {
         if (trackRef.current) {
-          trackRef.current.style.transform = `translateX(calc(-${originalImages.length * 85}% + 7.5%))`
+          trackRef.current.style.transform = `translateX(calc(-${(originalImages.length + 1) * 85}% + 7.5%))`
         }
       })
-    } else if (index === extendedImages.length - 1) {
+    } else if (index === extendedImages.length - 2) {
       track.style.transition = 'none'
-      setIndex(1)
+      setIndex(2)
 
       requestAnimationFrame(() => {
         if (trackRef.current) {
-          trackRef.current.style.transform = `translateX(calc(-85% + 7.5%))`
+          trackRef.current.style.transform = `translateX(calc(-170% + 7.5%))`
         }
       })
     }
