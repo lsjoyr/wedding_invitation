@@ -16,7 +16,7 @@ const extendedImages = [
   originalImages[1],
 ]
 
-const threshold = 50
+const threshold = 30
 
 function App() {
   const [index, setIndex] = useState(2)
