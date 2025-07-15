@@ -22,6 +22,12 @@ const extendedImages = [
 
 const threshold = 30
 
+declare global {
+  interface Window {
+    naver: any
+  }
+}
+
 
 function App() {
   const [index, setIndex] = useState(2)
@@ -47,13 +53,36 @@ function App() {
     imgs.forEach((img) => {
       img.setAttribute('draggable', 'false')
     })
+
     const disableRightClick = (e: MouseEvent) => {
       if ((e.target as HTMLElement).tagName === 'IMG') {
         e.preventDefault()
       }
     }
+
+    const script = document.createElement('script')
+    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${import.meta.env.VITE_NAVER_MAP_CLIENT_ID}`
+    script.async = true
+    document.head.appendChild(script)
+
+    script.onload = () => {
+      if (window.naver && document.getElementById('map')) {
+        const lat = 37.560635
+        const lng = 126.967385
+        const map = new window.naver.maps.Map('map', {
+          center: new window.naver.maps.LatLng(lat, lng),
+          zoom: 17
+        })
+        new window.naver.maps.Marker({
+          position: new window.naver.maps.LatLng(lat, lng),
+          map,
+        });
+      }
+    }
+
     document.addEventListener('contextmenu', disableRightClick)
     return () => {
+      document.head.removeChild(script)
       document.removeEventListener('contextmenu', disableRightClick)
     }
   }, [])
@@ -298,6 +327,7 @@ function App() {
       </div>
       <div id="location">
         <img width="100%" style={{ maxWidth: 800, display: 'block' }} height="auto" src={locationTitleImg} />
+        <div id="map" style={{ width: '100%', height: '300px', maxWidth: 800, margin: '0 auto' }}></div>
         <img width="100%" style={{ maxWidth: 800, display: 'block' }} height="auto" src={locationBottomMarginImg} />
       </div>
 
