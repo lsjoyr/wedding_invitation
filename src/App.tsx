@@ -1,10 +1,14 @@
-import { useRef, useState } from 'react'
-import introImg from './assets/0.jpeg'
-import welcomeImg from './assets/1.png'
+import { useRef, useState, useEffect } from 'react'
+import introImg from './assets/01.jpg'
+import welcomeImg from './assets/02.jpg'
+import galleryTitleImg from './assets/03.jpg'
 import gallery_img1 from './assets/g1.jpg'
 import gallery_img2 from './assets/g2.jpg'
 import gallery_img3 from './assets/g3.jpg'
 import gallery_img4 from './assets/g4.jpg'
+import galleryBottomMarginImg from './assets/04.jpg'
+import locationTitleImg from './assets/05.jpg'
+import locationBottomMarginImg from './assets/06.jpg'
 import './App.css'
 
 const originalImages = [gallery_img1, gallery_img2, gallery_img3, gallery_img4]
@@ -17,6 +21,7 @@ const extendedImages = [
 ]
 
 const threshold = 30
+
 
 function App() {
   const [index, setIndex] = useState(2)
@@ -36,6 +41,22 @@ function App() {
 
   const translateX = `translateX(calc(-${index * 85}% + 7.5% + ${(dragOffset / window.innerWidth) * 100}%))`
   const modalTranslateX = `translateX(calc(-${expandedIndex! * 100}% + ${(modalDragOffset / window.innerWidth) * 100}%))`
+
+  useEffect(() => {
+    const imgs = document.querySelectorAll('img')
+    imgs.forEach((img) => {
+      img.setAttribute('draggable', 'false')
+    })
+    const disableRightClick = (e: MouseEvent) => {
+      if ((e.target as HTMLElement).tagName === 'IMG') {
+        e.preventDefault()
+      }
+    }
+    document.addEventListener('contextmenu', disableRightClick)
+    return () => {
+      document.removeEventListener('contextmenu', disableRightClick)
+    }
+  }, [])
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -200,78 +221,87 @@ function App() {
 
   return (
     <>
-      <div id="intro_img">
-        <img width="100%" style={{ maxWidth: 800 }} height="auto" src={introImg} />
+      <div id="intro">
+        <img width="100%" style={{ maxWidth: 800, display: 'block' }} height="auto" src={introImg} />
       </div>
-      <div id="welcome_img">
-        <img width="100%" style={{ maxWidth: 800 }} height="auto" src={welcomeImg} />
+      <div id="welcome">
+        <img width="100%" style={{ maxWidth: 800, display: 'block' }} height="auto" src={welcomeImg} />
       </div>
-
-      <div className="slider-wrapper">
-        <div
-          className="slider-track-container"
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
+      <div id="gallery">
+        <img width="100%" style={{ maxWidth: 800, display: 'block' }} height="auto" src={galleryTitleImg} />
+        <div className="slider-wrapper">
           <div
-            className="slider-track"
-            ref={trackRef}
-            style={{
-              transform: translateX,
-              transition: dragStartX === null ? 'transform 0.4s ease' : 'none',
-            }}
-            onTransitionEnd={handleTransitionEnd}
+            className="slider-track-container"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
           >
-            {extendedImages.map((img, i) => (
-              <div className="slide" key={i}>
-                <img
-                  src={img}
-                  alt={`slide-${i}`}
-                  draggable={false}
-                  onContextMenu={(e) => e.preventDefault()}
-                  onClick={() => onImageClick(i)}
-                />
-              </div>
-            ))}
+            <div
+              className="slider-track"
+              ref={trackRef}
+              style={{
+                transform: translateX,
+                transition: dragStartX === null ? 'transform 0.4s ease' : 'none',
+              }}
+              onTransitionEnd={handleTransitionEnd}
+            >
+              {extendedImages.map((img, i) => (
+                <div className="slide" key={i}>
+                  <img
+                    src={img}
+                    alt={`slide-${i}`}
+                    draggable={false}
+                    onContextMenu={(e) => e.preventDefault()}
+                    onClick={() => onImageClick(i)}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
+
+        {expandedIndex !== null && (
+          <div
+            className="modal"
+            onMouseDown={handleModalMouseDown}
+            onMouseMove={handleModalMouseMove}
+            onMouseUp={handleModalMouseUp}
+            onMouseLeave={handleModalMouseUp}
+            onTouchStart={handleModalTouchStart}
+            onTouchMove={handleModalTouchMove}
+            onTouchEnd={handleModalTouchEnd}
+          >
+            <div
+              className="modal-track"
+              ref={modalTrackRef}
+              style={{ transform: modalTranslateX }}
+              onTransitionEnd={handleModalTransitionEnd}
+            >
+              {extendedImages.map((img, i) => (
+                <div className="modal-slide" key={i}>
+                  <img src={img}
+                    alt={`modal-${i}`}
+                    draggable={false}
+                    onContextMenu={(e) => e.preventDefault()}
+                    onClick={() => onModalImageClick()} />
+                </div>
+              ))}
+            </div>
+            <button className="close-button" onClick={(e) => { e.stopPropagation(); closeExpanded(); }}>×</button>
+          </div>
+        )}
+        <img width="100%" style={{ maxWidth: 800, display: 'block' }} height="auto" src={galleryBottomMarginImg} />
+      </div>
+      <div id="location">
+        <img width="100%" style={{ maxWidth: 800, display: 'block' }} height="auto" src={locationTitleImg} />
+        <img width="100%" style={{ maxWidth: 800, display: 'block' }} height="auto" src={locationBottomMarginImg} />
       </div>
 
-      {expandedIndex !== null && (
-        <div
-          className="modal"
-          onMouseDown={handleModalMouseDown}
-          onMouseMove={handleModalMouseMove}
-          onMouseUp={handleModalMouseUp}
-          onMouseLeave={handleModalMouseUp}
-          onTouchStart={handleModalTouchStart}
-          onTouchMove={handleModalTouchMove}
-          onTouchEnd={handleModalTouchEnd}
-        >
-          <div
-            className="modal-track"
-            ref={modalTrackRef}
-            style={{ transform: modalTranslateX }}
-            onTransitionEnd={handleModalTransitionEnd}
-          >
-            {extendedImages.map((img, i) => (
-              <div className="modal-slide" key={i}>
-                <img src={img}
-                  alt={`modal-${i}`}
-                  draggable={false}
-                  onContextMenu={(e) => e.preventDefault()}
-                  onClick={() => onModalImageClick()} />
-              </div>
-            ))}
-          </div>
-          <button className="close-button" onClick={(e) => { e.stopPropagation(); closeExpanded(); }}>×</button>
-        </div>
-      )}
+
     </>
   )
 }

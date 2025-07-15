@@ -8,6 +8,13 @@ body {
   margin: 0;
 }
 
+img {
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
 .slider-wrapper {
   position: relative;
   width: 100%;
