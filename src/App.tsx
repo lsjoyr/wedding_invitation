@@ -23,13 +23,19 @@ function App() {
   const [dragStartX, setDragStartX] = useState<number | null>(null)
   const [dragOffset, setDragOffset] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const [isModalTransitioning, setIsModalTransitioning] = useState(false)
   const [dragging, setDragging] = useState(false)
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
 
   const trackRef = useRef<HTMLDivElement>(null)
+  const modalTrackRef = useRef<HTMLDivElement>(null)
 
-  const computedOffsetPercent = (dragOffset / window.innerWidth) * 100
-  const translateX = `translateX(calc(-${index * 85}% + 7.5% + ${computedOffsetPercent}%))`
+  const [modalDragStartX, setModalDragStartX] = useState<number | null>(null)
+  const [modalDragOffset, setModalDragOffset] = useState(0)
+  const [modalDragging, setModalDragging] = useState(false)
+
+  const translateX = `translateX(calc(-${index * 85}% + 7.5% + ${(dragOffset / window.innerWidth) * 100}%))`
+  const modalTranslateX = `translateX(calc(-${expandedIndex! * 100}% + ${(modalDragOffset / window.innerWidth) * 100}%))`
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -45,11 +51,8 @@ function App() {
   }
 
   const handleMouseUp = () => {
-    if (dragOffset > threshold) {
-      goTo(index - 1)
-    } else if (dragOffset < -threshold) {
-      goTo(index + 1)
-    }
+    if (dragOffset > threshold) goTo(index - 1)
+    else if (dragOffset < -threshold) goTo(index + 1)
     setDragStartX(null)
     setDragOffset(0)
   }
@@ -68,20 +71,15 @@ function App() {
   }
 
   const handleTouchEnd = () => {
-    if (dragOffset > threshold) {
-      goTo(index - 1)
-    } else if (dragOffset < -threshold) {
-      goTo(index + 1)
-    }
+    if (dragOffset > threshold) goTo(index - 1)
+    else if (dragOffset < -threshold) goTo(index + 1)
     setDragStartX(null)
     setDragOffset(0)
   }
 
   const goTo = (newIndex: number) => {
     if (!trackRef.current || isTransitioning) return
-    const track = trackRef.current
-
-    track.style.transition = 'transform 0.4s ease'
+    trackRef.current.style.transition = 'transform 0.4s ease'
     setIsTransitioning(true)
     setIndex(newIndex)
   }
@@ -97,34 +95,107 @@ function App() {
       setIndex(originalImages.length + 1)
 
       requestAnimationFrame(() => {
-        if (trackRef.current) {
-          trackRef.current.style.transform = `translateX(calc(-${(originalImages.length + 1) * 85}% + 7.5%))`
-        }
+        trackRef.current!.style.transform = `translateX(calc(-${(originalImages.length + 1) * 85}% + 7.5%))`
       })
     } else if (index === extendedImages.length - 2) {
       track.style.transition = 'none'
       setIndex(2)
 
       requestAnimationFrame(() => {
-        if (trackRef.current) {
-          trackRef.current.style.transform = `translateX(calc(-170% + 7.5%))`
-        }
+        trackRef.current!.style.transform = `translateX(calc(-170% + 7.5%))`
       })
     }
   }
 
   const onImageClick = (i: number) => {
-    if (!dragging) {
-      if (expandedIndex === i) {
-        setExpandedIndex(null)
-      } else {
-        setExpandedIndex(i)
-      }
-    }
+    if (!dragging) setExpandedIndex(i)
   }
 
   const closeExpanded = () => {
     setExpandedIndex(null)
+  }
+
+  const handleModalMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault()
+    setModalDragStartX(e.pageX)
+    setModalDragging(false)
+  }
+
+  const handleModalMouseMove = (e: React.MouseEvent) => {
+    if (modalDragStartX === null) return
+    const delta = e.pageX - modalDragStartX
+    if (Math.abs(delta) > 5) setModalDragging(true)
+    setModalDragOffset(delta)
+  }
+
+  const handleModalMouseUp = () => {
+    if (modalDragOffset > threshold) {
+      const next = expandedIndex! - 1
+      goModalTo(next)
+    } else if (modalDragOffset < -threshold) {
+      const next = expandedIndex! + 1
+      goModalTo(next)
+    }
+    setModalDragStartX(null)
+    setModalDragOffset(0)
+  }
+
+  const handleModalTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault()
+    setDragStartX(e.touches[0].clientX)
+    setModalDragging(false)
+  }
+
+  const handleModalTouchMove = (e: React.TouchEvent) => {
+    if (modalDragStartX === null) return
+    const delta = e.touches[0].clientX - modalDragStartX
+    if (Math.abs(delta) > 5) setModalDragging(true)
+    setModalDragOffset(delta)
+  }
+
+  const handleModalTouchEnd = () => {
+    if (modalDragOffset > threshold) {
+      const next = expandedIndex! - 1
+      goModalTo(next)
+    } else if (modalDragOffset < -threshold) {
+      const next = expandedIndex! + 1
+      goModalTo(next)
+    }
+    setModalDragStartX(null)
+    setModalDragOffset(0)
+  }
+
+  const goModalTo = (newIndex: number) => {
+    if (!modalTrackRef.current || expandedIndex === null || isModalTransitioning) return
+    modalTrackRef.current.style.transition = 'transform 0.4s ease'
+    setIsModalTransitioning(true)
+    setExpandedIndex(newIndex)
+    setIndex(newIndex)
+  }
+
+  const handleModalTransitionEnd = () => {
+    const modalTrack = modalTrackRef.current
+    if (!modalTrack || expandedIndex === null) return
+
+    setIsModalTransitioning(false)
+
+    if (expandedIndex === 1) {
+      modalTrack.style.transition = 'none'
+      setExpandedIndex(originalImages.length + 1)
+      requestAnimationFrame(() => {
+        modalTrackRef.current!.style.transform = `translateX(calc(-${(originalImages.length + 1) * 100}%))`
+      })
+    } else if (expandedIndex === extendedImages.length - 2) {
+      modalTrack.style.transition = 'none'
+      setExpandedIndex(2)
+      requestAnimationFrame(() => {
+        modalTrackRef.current!.style.transform = `translateX(-200%)`
+      })
+    }
+  }
+
+  const onModalImageClick = () => {
+    if (!modalDragging) closeExpanded()
   }
 
   return (
@@ -172,17 +243,33 @@ function App() {
       </div>
 
       {expandedIndex !== null && (
-        <div className="modal" onClick={closeExpanded}>
-          <img src={extendedImages[expandedIndex]} alt={`expanded-${expandedIndex}`} />
-          <button
-            className="close-button"
-            onClick={(e) => {
-              e.stopPropagation()
-              closeExpanded()
-            }}
+        <div
+          className="modal"
+          onMouseDown={handleModalMouseDown}
+          onMouseMove={handleModalMouseMove}
+          onMouseUp={handleModalMouseUp}
+          onMouseLeave={handleModalMouseUp}
+          onTouchStart={handleModalTouchStart}
+          onTouchMove={handleModalTouchMove}
+          onTouchEnd={handleModalTouchEnd}
+        >
+          <div
+            className="modal-track"
+            ref={modalTrackRef}
+            style={{ transform: modalTranslateX }}
+            onTransitionEnd={handleModalTransitionEnd}
           >
-            &times;
-          </button>
+            {extendedImages.map((img, i) => (
+              <div className="modal-slide" key={i}>
+                <img src={img}
+                  alt={`modal-${i}`}
+                  draggable={false}
+                  onContextMenu={(e) => e.preventDefault()}
+                  onClick={() => onModalImageClick()} />
+              </div>
+            ))}
+          </div>
+          <button className="close-button" onClick={(e) => { e.stopPropagation(); closeExpanded(); }}>×</button>
         </div>
       )}
     </>
