@@ -23,6 +23,9 @@ function App() {
   const [dragStartX, setDragStartX] = useState<number | null>(null)
   const [dragOffset, setDragOffset] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const [dragging, setDragging] = useState(false)
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
+
   const trackRef = useRef<HTMLDivElement>(null)
 
   const computedOffsetPercent = (dragOffset / window.innerWidth) * 100
@@ -31,11 +34,13 @@ function App() {
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
     setDragStartX(e.pageX)
+    setDragging(false)
   }
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (dragStartX === null) return
     const delta = e.pageX - dragStartX
+    if (Math.abs(delta) > 5) setDragging(true)
     setDragOffset(delta)
   }
 
@@ -52,11 +57,13 @@ function App() {
   const handleTouchStart = (e: React.TouchEvent) => {
     e.preventDefault()
     setDragStartX(e.touches[0].clientX)
+    setDragging(false)
   }
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (dragStartX === null) return
     const delta = e.touches[0].clientX - dragStartX
+    if (Math.abs(delta) > 5) setDragging(true)
     setDragOffset(delta)
   }
 
@@ -106,6 +113,20 @@ function App() {
     }
   }
 
+  const onImageClick = (i: number) => {
+    if (!dragging) {
+      if (expandedIndex === i) {
+        setExpandedIndex(null)
+      } else {
+        setExpandedIndex(i)
+      }
+    }
+  }
+
+  const closeExpanded = () => {
+    setExpandedIndex(null)
+  }
+
   return (
     <>
       <div id="intro_img">
@@ -142,12 +163,28 @@ function App() {
                   alt={`slide-${i}`}
                   draggable={false}
                   onContextMenu={(e) => e.preventDefault()}
+                  onClick={() => onImageClick(i)}
                 />
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      {expandedIndex !== null && (
+        <div className="modal" onClick={closeExpanded}>
+          <img src={extendedImages[expandedIndex]} alt={`expanded-${expandedIndex}`} />
+          <button
+            className="close-button"
+            onClick={(e) => {
+              e.stopPropagation()
+              closeExpanded()
+            }}
+          >
+            &times;
+          </button>
+        </div>
+      )}
     </>
   )
 }
