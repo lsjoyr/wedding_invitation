@@ -53,11 +53,13 @@ function App() {
   const modalTranslateX = `translateX(calc(-${expandedIndex! * 100}% + ${(modalDragOffset / window.innerWidth) * 100}%))`
 
   useEffect(() => {
+    // 이미지 드래그 방지
     const imgs = document.querySelectorAll('img')
     imgs.forEach((img) => {
       img.setAttribute('draggable', 'false')
     })
 
+    // 이미지 우클릭 방지
     const disableRightClick = (e: MouseEvent) => {
       if ((e.target as HTMLElement).tagName === 'IMG') {
         e.preventDefault()
@@ -65,9 +67,9 @@ function App() {
     }
     document.addEventListener('contextmenu', disableRightClick)
 
+    // 슬라이드 터치 중 세로 스크롤 둔화
     const handleTouchStart = (e: TouchEvent) => {
       if (!(e.target instanceof HTMLElement)) return
-      // slider 영역에서만 감지
       if (e.target.closest('.slider-track-container')) {
         isTouchingSliderRef.current = true
         touchStartYRef.current = e.touches[0].clientY
@@ -84,7 +86,6 @@ function App() {
       const deltaY = Math.abs(currentY - startY)
 
       if (deltaY > scroll_threshold) {
-        // 충분히 세로 이동했으면 스크롤 허용
         verticalScrollAllowedRef.current = true
       }
 
@@ -100,6 +101,13 @@ function App() {
     document.addEventListener('touchstart', handleTouchStart, { passive: true })
     document.addEventListener('touchmove', handleTouchMove, { passive: false })
     document.addEventListener('touchend', handleTouchEnd)
+
+    // 확대 슬라이드 중 배경 스크롤 방지
+    if (expandedIndex !== null) {
+      document.body.classList.add('no-overscroll')
+    } else {
+      document.body.classList.remove('no-overscroll')
+    }
 
     const script = document.createElement('script')
     script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${import.meta.env.VITE_NAVER_MAP_CLIENT_ID}`
@@ -128,7 +136,7 @@ function App() {
       document.removeEventListener('touchmove', handleTouchMove)
       document.removeEventListener('touchend', handleTouchEnd)
     }
-  }, [])
+  }, [expandedIndex])
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()

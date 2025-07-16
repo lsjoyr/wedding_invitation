@@ -15,6 +15,13 @@ img {
   -webkit-touch-callout: none;
 }
 
+.no-overscroll {
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+  /* 터치 이벤트 스크롤 방지에 도움 */
+}
+
 .slider-wrapper {
   position: relative;
   width: 100%;
