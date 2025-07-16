@@ -67,9 +67,18 @@ function App() {
     }
     document.addEventListener('contextmenu', disableRightClick)
 
-    // 슬라이드 터치 중 세로 스크롤 둔화
+    // 페이지 확대/축소 방지
+    const handleWheel = (e: WheelEvent) => {
+      if (e.ctrlKey) {
+        e.preventDefault()
+      }
+    }
+    window.addEventListener('wheel', handleWheel, { passive: false })
+
+    // 슬라이드 터치 중 세로 스크롤 둔화 & pinch zoom 방지
     const handleTouchStart = (e: TouchEvent) => {
       if (!(e.target instanceof HTMLElement)) return
+
       if (e.target.closest('.slider-track-container')) {
         isTouchingSliderRef.current = true
         touchStartYRef.current = e.touches[0].clientY
@@ -77,6 +86,14 @@ function App() {
       }
     }
     const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 1) {
+        const mapElement = document.getElementById('map')
+        if (!mapElement) return
+        if (!mapElement.contains(e.target as Node)) {
+          e.preventDefault()
+        }
+      }
+
       if (!isTouchingSliderRef.current) return
 
       const currentY = e.touches[0].clientY
@@ -135,6 +152,7 @@ function App() {
       document.removeEventListener('touchstart', handleTouchStart)
       document.removeEventListener('touchmove', handleTouchMove)
       document.removeEventListener('touchend', handleTouchEnd)
+      window.removeEventListener('wheel', handleWheel)
     }
   }, [expandedIndex])
 
