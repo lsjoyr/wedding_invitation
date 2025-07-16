@@ -20,7 +20,8 @@ const extendedImages = [
   originalImages[1],
 ]
 
-const threshold = 30
+const slide_threshold = 30
+const scroll_threshold = 10
 
 declare global {
   interface Window {
@@ -40,6 +41,9 @@ function App() {
 
   const trackRef = useRef<HTMLDivElement>(null)
   const modalTrackRef = useRef<HTMLDivElement>(null)
+  const isTouchingSliderRef = useRef(false)
+  const touchStartYRef = useRef<number | null>(null)
+  const verticalScrollAllowedRef = useRef(false)
 
   const [modalDragStartX, setModalDragStartX] = useState<number | null>(null)
   const [modalDragOffset, setModalDragOffset] = useState(0)
@@ -59,6 +63,43 @@ function App() {
         e.preventDefault()
       }
     }
+    document.addEventListener('contextmenu', disableRightClick)
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (!(e.target instanceof HTMLElement)) return
+      // slider 영역에서만 감지
+      if (e.target.closest('.slider-track-container')) {
+        isTouchingSliderRef.current = true
+        touchStartYRef.current = e.touches[0].clientY
+        verticalScrollAllowedRef.current = false
+      }
+    }
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isTouchingSliderRef.current) return
+
+      const currentY = e.touches[0].clientY
+      const startY = touchStartYRef.current
+      if (startY == null) return
+
+      const deltaY = Math.abs(currentY - startY)
+
+      if (deltaY > scroll_threshold) {
+        // 충분히 세로 이동했으면 스크롤 허용
+        verticalScrollAllowedRef.current = true
+      }
+
+      if (!verticalScrollAllowedRef.current) {
+        e.preventDefault()
+      }
+    }
+    const handleTouchEnd = () => {
+      isTouchingSliderRef.current = false
+      touchStartYRef.current = null
+      verticalScrollAllowedRef.current = false
+    }
+    document.addEventListener('touchstart', handleTouchStart, { passive: true })
+    document.addEventListener('touchmove', handleTouchMove, { passive: false })
+    document.addEventListener('touchend', handleTouchEnd)
 
     const script = document.createElement('script')
     script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${import.meta.env.VITE_NAVER_MAP_CLIENT_ID}`
@@ -80,10 +121,12 @@ function App() {
       }
     }
 
-    document.addEventListener('contextmenu', disableRightClick)
     return () => {
       document.head.removeChild(script)
       document.removeEventListener('contextmenu', disableRightClick)
+      document.removeEventListener('touchstart', handleTouchStart)
+      document.removeEventListener('touchmove', handleTouchMove)
+      document.removeEventListener('touchend', handleTouchEnd)
     }
   }, [])
 
@@ -101,8 +144,8 @@ function App() {
   }
 
   const handleMouseUp = () => {
-    if (dragOffset > threshold) goTo(index - 1)
-    else if (dragOffset < -threshold) goTo(index + 1)
+    if (dragOffset > slide_threshold) goTo(index - 1)
+    else if (dragOffset < -slide_threshold) goTo(index + 1)
     setDragStartX(null)
     setDragOffset(0)
   }
@@ -121,8 +164,8 @@ function App() {
   }
 
   const handleTouchEnd = () => {
-    if (dragOffset > threshold) goTo(index - 1)
-    else if (dragOffset < -threshold) goTo(index + 1)
+    if (dragOffset > slide_threshold) goTo(index - 1)
+    else if (dragOffset < -slide_threshold) goTo(index + 1)
     setDragStartX(null)
     setDragOffset(0)
   }
@@ -179,10 +222,10 @@ function App() {
   }
 
   const handleModalMouseUp = () => {
-    if (modalDragOffset > threshold) {
+    if (modalDragOffset > slide_threshold) {
       const next = expandedIndex! - 1
       goModalTo(next)
-    } else if (modalDragOffset < -threshold) {
+    } else if (modalDragOffset < -slide_threshold) {
       const next = expandedIndex! + 1
       goModalTo(next)
     }
@@ -204,10 +247,10 @@ function App() {
   }
 
   const handleModalTouchEnd = () => {
-    if (modalDragOffset > threshold) {
+    if (modalDragOffset > slide_threshold) {
       const next = expandedIndex! - 1
       goModalTo(next)
-    } else if (modalDragOffset < -threshold) {
+    } else if (modalDragOffset < -slide_threshold) {
       const next = expandedIndex! + 1
       goModalTo(next)
     }
