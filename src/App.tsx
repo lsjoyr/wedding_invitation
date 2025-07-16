@@ -303,6 +303,7 @@ function App() {
             onTouchStart={handleModalTouchStart}
             onTouchMove={handleModalTouchMove}
             onTouchEnd={handleModalTouchEnd}
+            onClick={() => onModalImageClick()}
           >
             <div
               className="modal-track"
@@ -315,8 +316,7 @@ function App() {
                   <img src={img}
                     alt={`modal-${i}`}
                     draggable={false}
-                    onContextMenu={(e) => e.preventDefault()}
-                    onClick={() => onModalImageClick()} />
+                    onContextMenu={(e) => e.preventDefault()} />
                 </div>
               ))}
             </div>
