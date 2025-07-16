@@ -192,7 +192,7 @@ function App() {
 
   const handleModalTouchStart = (e: React.TouchEvent) => {
     e.preventDefault()
-    setDragStartX(e.touches[0].clientX)
+    setModalDragStartX(e.touches[0].clientX)
     setModalDragging(false)
   }
 
