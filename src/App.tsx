@@ -389,6 +389,9 @@ function App() {
                 </div>
               ))}
             </div>
+            <div className="modal-fixed-caption">
+              옆으로 넘기시면 더 많은 사진을 볼 수 있습니다.
+            </div>
             <button className="close-button" onClick={(e) => { e.stopPropagation(); closeExpanded(); }}>×</button>
           </div>
         )}
