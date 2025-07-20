@@ -52,6 +52,12 @@ function App() {
   const translateX = `translateX(calc(-${index * 85}% + 7.5% + ${(dragOffset / window.innerWidth) * 100}%))`
   const modalTranslateX = `translateX(calc(-${expandedIndex! * 100}% + ${(modalDragOffset / window.innerWidth) * 100}%))`
 
+  const [isAccountVisible, setIsAccountVisible] = useState(false)
+  const accountRef = useRef<HTMLDivElement>(null)
+  const toggleAccountVisibility = () => {
+    setIsAccountVisible(prev => !prev)
+  }
+
   useEffect(() => {
     // 이미지 드래그 방지
     const imgDivs = document.querySelectorAll('.bg-image-div, .slide-image-div')
@@ -148,6 +154,14 @@ function App() {
       }
     }
 
+    // 드롭다운 열릴 때 부드러운 스크롤 이동
+    let timeout: ReturnType<typeof setTimeout> | null = null
+    if (isAccountVisible) {
+      timeout = setTimeout(() => {
+        accountRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 400)
+    }
+
     return () => {
       document.head.removeChild(script)
       document.removeEventListener('contextmenu', disableRightClick)
@@ -155,8 +169,9 @@ function App() {
       document.removeEventListener('touchmove', handleTouchMove)
       document.removeEventListener('touchend', handleTouchEnd)
       window.removeEventListener('wheel', handleWheel)
+      if (timeout) clearTimeout(timeout)
     }
-  }, [expandedIndex])
+  }, [expandedIndex, isAccountVisible])
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -319,6 +334,20 @@ function App() {
     if (!modalDragging) closeExpanded()
   }
 
+  const copyAccountNumber = (accountNumber: string) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(accountNumber)
+        .then(() => {
+          alert('계좌번호가 복사되었습니다.')
+        })
+        .catch(() => {
+          alert('복사에 실패했습니다.')
+        })
+    } else {
+      alert('클립보드 기능을 지원하지 않는 브라우저입니다.')
+    }
+  }
+
   return (
     <>
       <div id="intro">
@@ -477,8 +506,29 @@ function App() {
           aria-label="intro image"
         />
       </div>
-
-
+      <div id="gift" className="gift-container">
+        <button
+          className="account-toggle-button"
+          onClick={toggleAccountVisibility}
+          aria-expanded={isAccountVisible}
+          aria-controls="account-info"
+        >
+          신랑측 계좌번호 보기
+        </button>
+        <div className={`account-info ${isAccountVisible ? 'visible' : ''}`} aria-hidden={!isAccountVisible} ref={accountRef}>
+          <div className="account-item">
+            <p className="account-name">홍길동</p>
+            <p className="account-number">123-456-78901234</p>
+            <button
+              className="copy-button"
+              onClick={() => copyAccountNumber('123-456-78901234')}
+              aria-label="계좌번호 복사"
+            >
+              복사
+            </button>
+          </div>
+        </div>
+      </div>
     </>
   )
 }
