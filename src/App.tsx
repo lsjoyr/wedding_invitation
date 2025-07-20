@@ -54,14 +54,16 @@ function App() {
 
   useEffect(() => {
     // 이미지 드래그 방지
-    const imgs = document.querySelectorAll('img')
-    imgs.forEach((img) => {
-      img.setAttribute('draggable', 'false')
+    const imgDivs = document.querySelectorAll('.bg-image-div, .slide-image-div')
+    imgDivs.forEach((div) => {
+      div.setAttribute('draggable', 'false')
     })
-
     // 이미지 우클릭 방지
     const disableRightClick = (e: MouseEvent) => {
-      if ((e.target as HTMLElement).tagName === 'IMG') {
+      if (
+        (e.target instanceof HTMLElement) &&
+        (e.target.classList.contains('bg-image-div') || e.target.classList.contains('slide-image-div'))
+      ) {
         e.preventDefault()
       }
     }
@@ -320,13 +322,43 @@ function App() {
   return (
     <>
       <div id="intro">
-        <img width="100%" style={{ maxWidth: 800, display: 'block' }} height="auto" src={introImg} />
+        <div
+          className="bg-image-div"
+          style={{
+            width: '100%',
+            maxWidth: 800,
+            aspectRatio: 800 / 1423,
+            backgroundImage: `url(${introImg})`,
+          }}
+          role="img"
+          aria-label="intro image"
+        />
       </div>
       <div id="welcome">
-        <img width="100%" style={{ maxWidth: 800, display: 'block' }} height="auto" src={welcomeImg} />
+        <div
+          className="bg-image-div"
+          style={{
+            width: '100%',
+            maxWidth: 800,
+            aspectRatio: '800 / 1122',
+            backgroundImage: `url(${welcomeImg})`,
+          }}
+          role="img"
+          aria-label="welcome image"
+        />
       </div>
       <div id="gallery">
-        <img width="100%" style={{ maxWidth: 800, display: 'block' }} height="auto" src={galleryTitleImg} />
+        <div
+          className="bg-image-div"
+          style={{
+            width: '100%',
+            maxWidth: 800,
+            aspectRatio: '800 / 361',
+            backgroundImage: `url(${galleryTitleImg})`,
+          }}
+          role="img"
+          aria-label="gallery title image"
+        />
         <div className="slider-wrapper">
           <div
             className="slider-track-container"
@@ -349,12 +381,16 @@ function App() {
             >
               {extendedImages.map((img, i) => (
                 <div className="slide" key={i}>
-                  <img
-                    src={img}
-                    alt={`slide-${i}`}
-                    draggable={false}
+                  <div
+                    className="slide-image-div"
+                    style={{
+                      backgroundImage: `url(${img})`,
+                      aspectRatio: '780 / 1024',
+                    }}
                     onContextMenu={(e) => e.preventDefault()}
                     onClick={() => onImageClick(i)}
+                    role="img"
+                    aria-label={`slide image ${i}`}
                   />
                 </div>
               ))}
@@ -382,10 +418,19 @@ function App() {
             >
               {extendedImages.map((img, i) => (
                 <div className="modal-slide" key={i}>
-                  <img src={img}
-                    alt={`modal-${i}`}
-                    draggable={false}
-                    onContextMenu={(e) => e.preventDefault()} />
+                  <div
+                    className="slide-image-div"
+                    style={{
+                      height: '100%',
+                      maxWidth: '90%',
+                      backgroundImage: `url(${img})`,
+                      aspectRatio: '780 / 1024',
+
+                    }}
+                    onContextMenu={(e) => e.preventDefault()}
+                    role="img"
+                    aria-label={`modal image ${i}`}
+                  />
                 </div>
               ))}
             </div>
@@ -395,12 +440,42 @@ function App() {
             <button className="close-button" onClick={(e) => { e.stopPropagation(); closeExpanded(); }}>×</button>
           </div>
         )}
-        <img width="100%" style={{ maxWidth: 800, display: 'block' }} height="auto" src={galleryBottomMarginImg} />
+        <div
+          className="bg-image-div"
+          style={{
+            width: '100%',
+            maxWidth: 800,
+            aspectRatio: 800 / 176,
+            backgroundImage: `url(${galleryBottomMarginImg})`,
+          }}
+          role="img"
+          aria-label="intro image"
+        />
       </div>
       <div id="location">
-        <img width="100%" style={{ maxWidth: 800, display: 'block' }} height="auto" src={locationTitleImg} />
+        <div
+          className="bg-image-div"
+          style={{
+            width: '100%',
+            maxWidth: 800,
+            aspectRatio: 800 / 503,
+            backgroundImage: `url(${locationTitleImg})`,
+          }}
+          role="img"
+          aria-label="intro image"
+        />
         <div id="map" style={{ width: '100%', height: '300px', maxWidth: 800, margin: '0 auto' }}></div>
-        <img width="100%" style={{ maxWidth: 800, display: 'block' }} height="auto" src={locationBottomMarginImg} />
+        <div
+          className="bg-image-div"
+          style={{
+            width: '100%',
+            maxWidth: 800,
+            aspectRatio: 800 / 176,
+            backgroundImage: `url(${locationBottomMarginImg})`,
+          }}
+          role="img"
+          aria-label="intro image"
+        />
       </div>
 
 
