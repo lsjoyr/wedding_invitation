@@ -9,6 +9,7 @@ import gallery_img4 from './assets/g4.jpg'
 import galleryBottomMarginImg from './assets/04.jpg'
 import locationTitleImg from './assets/05.jpg'
 import locationBottomMarginImg from './assets/06.jpg'
+import downIconImg from './assets/down_icon.png'
 import './App.css'
 
 const originalImages = [gallery_img1, gallery_img2, gallery_img3, gallery_img4]
@@ -52,10 +53,15 @@ function App() {
   const translateX = `translateX(calc(-${index * 85}% + 7.5% + ${(dragOffset / window.innerWidth) * 100}%))`
   const modalTranslateX = `translateX(calc(-${expandedIndex! * 100}% + ${(modalDragOffset / window.innerWidth) * 100}%))`
 
-  const [isAccountVisible, setIsAccountVisible] = useState(false)
-  const accountRef = useRef<HTMLDivElement>(null)
-  const toggleAccountVisibility = () => {
-    setIsAccountVisible(prev => !prev)
+  const [isGroomAccountVisible, setIsGroomAccountVisible] = useState(false)
+  const [isBrideAccountVisible, setIsBrideAccountVisible] = useState(false)
+  const groomAccountRef = useRef<HTMLDivElement>(null)
+  const brideAccountRef = useRef<HTMLDivElement>(null)
+  const toggleGroomAccountVisibility = () => {
+    setIsGroomAccountVisible(prev => !prev)
+  }
+  const toggleBrideAccountVisibility = () => {
+    setIsBrideAccountVisible(prev => !prev)
   }
 
   useEffect(() => {
@@ -156,9 +162,14 @@ function App() {
 
     // 드롭다운 열릴 때 부드러운 스크롤 이동
     let timeout: ReturnType<typeof setTimeout> | null = null
-    if (isAccountVisible) {
+    if (isGroomAccountVisible) {
       timeout = setTimeout(() => {
-        accountRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        groomAccountRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 400)
+    }
+    if (isBrideAccountVisible) {
+      timeout = setTimeout(() => {
+        brideAccountRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }, 400)
     }
 
@@ -171,7 +182,7 @@ function App() {
       window.removeEventListener('wheel', handleWheel)
       if (timeout) clearTimeout(timeout)
     }
-  }, [expandedIndex, isAccountVisible])
+  }, [expandedIndex, isGroomAccountVisible, isBrideAccountVisible])
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -507,24 +518,94 @@ function App() {
         />
       </div>
       <div id="gift" className="gift-container">
-        <button
+        <div
           className="account-toggle-button"
-          onClick={toggleAccountVisibility}
-          aria-expanded={isAccountVisible}
-          aria-controls="account-info"
+          onClick={toggleGroomAccountVisibility}
+          aria-expanded={isGroomAccountVisible}
+          aria-controls="groom-account-info"
         >
-          신랑측 계좌번호 보기
-        </button>
-        <div className={`account-info ${isAccountVisible ? 'visible' : ''}`} aria-hidden={!isAccountVisible} ref={accountRef}>
+          <p className="account-toggle-text">신랑측 계좌번호 보기</p>
+          <div
+            className={`account-toggle-icon ${isGroomAccountVisible ? 'rotated' : ''}`}
+            style={{
+              backgroundImage: `url(${downIconImg})`,
+              width: 16,
+              height: 9,
+            }}
+          />
+        </div>
+        <div className={`account-info ${isGroomAccountVisible ? 'visible' : ''}`} aria-hidden={!isGroomAccountVisible} ref={groomAccountRef}>
           <div className="account-item">
-            <p className="account-name">홍길동</p>
-            <p className="account-number">123-456-78901234</p>
+            <div className="account-text">
+              <span className="account-name">이승준</span>
+              <span className="account-number">신한은행 110-159-100961</span>
+            </div>
             <button
               className="copy-button"
-              onClick={() => copyAccountNumber('123-456-78901234')}
+              onClick={() => copyAccountNumber('110159100961')}
               aria-label="계좌번호 복사"
             >
-              복사
+              계좌번호 복사
+            </button>
+          </div>
+          <hr style={{margin:'0 35px', borderWidth: 0.1}}></hr>
+          <div className="account-item">
+            <div className="account-text">
+              <span className="account-name">이승준</span>
+              <span className="account-number">신한은행 110-159-100961</span>
+            </div>
+            <button
+              className="copy-button"
+              onClick={() => copyAccountNumber('110159100961')}
+              aria-label="계좌번호 복사"
+            >
+              계좌번호 복사
+            </button>
+          </div>
+        </div>
+        <div
+          className="account-toggle-button"
+          onClick={toggleBrideAccountVisibility}
+          aria-expanded={isBrideAccountVisible}
+          aria-controls="bride-account-info"
+          style={{ marginTop: '27px' }} // 신랑측과 간격을 위해 margin-top 추가
+        >
+          <p className="account-toggle-text">신부측 계좌번호 보기</p>
+          <div
+            className={`account-toggle-icon ${isBrideAccountVisible ? 'rotated' : ''}`}
+            style={{
+              backgroundImage: `url(${downIconImg})`,
+              width: 16,
+              height: 9,
+            }}
+          />
+        </div>
+        <div className={`account-info ${isBrideAccountVisible ? 'visible' : ''}`} aria-hidden={!isBrideAccountVisible} ref={brideAccountRef} id="bride-account-info">
+          <div className="account-item">
+            <div className="account-text">
+              <span className="account-name">오유림</span>
+              <span className="account-number">국민은행 97707211070</span>
+            </div>
+            <button
+              className="copy-button"
+              onClick={() => copyAccountNumber('97707211070')}
+              aria-label="계좌번호 복사"
+            >
+              계좌번호 복사
+            </button>
+          </div>
+          <hr style={{margin:'0 35px', borderWidth: 0.1}}></hr>
+          <div className="account-item">
+            <div className="account-text">
+              <span className="account-name">오유림</span>
+              <span className="account-number">국민은행 97707211070</span>
+            </div>
+            <button
+              className="copy-button"
+              onClick={() => copyAccountNumber('110159100961')}
+              aria-label="계좌번호 복사"
+            >
+              계좌번호 복사
             </button>
           </div>
         </div>

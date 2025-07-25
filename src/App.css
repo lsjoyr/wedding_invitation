@@ -10,6 +10,10 @@ body {
   margin: 0;
 }
 
+p {
+  margin: 0;
+}
+
 .bg-image-div {
   display: block;
   background-size: cover;
@@ -143,15 +147,19 @@ body {
 
 /* 버튼 스타일 */
 .account-toggle-button {
+  position: relative;
+  text-align: center;
+  align-items: center;
+  width: 100%;
   background-color: #f0f0f0;
   border: 1px solid #ccc;
   border-radius: 6px;
-  padding: 10px 20px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 30px;
   font-weight: 500;
   transition: background-color 0.3s ease;
   user-select: none;
+  padding: 15px 0px;
 }
 
 .account-toggle-button:hover {
@@ -163,13 +171,32 @@ body {
   outline-offset: 2px;
 }
 
+.account-toggle-text {
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.account-toggle-icon {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transition: transform 0.3s ease;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 9px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.account-toggle-icon.rotated {
+  transform: translateY(-50%) rotate(180deg);
+}
+
 /* 계좌번호 정보 영역 - 기본은 숨김 */
 .account-info {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.4s ease;
-  margin-top: 10px;
-  font-size: 18px;
   color: #333;
   background-color: #fafafa;
   border-radius: 6px;
@@ -178,7 +205,7 @@ body {
 
 /* visible 클래스 붙으면 드롭다운 펼쳐짐 */
 .account-info.visible {
-  max-height: 200px;
+  max-height: 500px;
   /* 필요하면 더 크게 조정 가능 */
 }
 
@@ -187,30 +214,37 @@ body {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  margin: 10px 0;
+  margin: 28px 10px;
 }
 
 /* 이름, 계좌번호 텍스트 */
+.account-text {
+  display: flex;
+  flex-direction: column;
+  font-size: 30px;
+  width: 70%;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
 .account-name {
   font-weight: 600;
   min-width: 60px;
-  text-align: right;
+  text-align: left;
 }
 
 .account-number {
-  font-family: monospace;
-  font-size: 18px;
   user-select: text;
   margin: 0;
+  text-align: left;
 }
 
 .copy-button {
-  background-color: #4a90e2;
-  border: none;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 4px;
-  font-size: 14px;
+  background-color: white;
+  border: 0.5px solid black;
+  color: black;
+  padding: 6px 23px;
+  border-radius: 20px;
+  font-size: 19px;
   cursor: pointer;
   user-select: none;
   transition: background-color 0.3s ease;
