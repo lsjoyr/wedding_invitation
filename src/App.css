@@ -155,7 +155,7 @@ p {
   border: 1px solid #ccc;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 30px;
+  font-size: 1em;
   font-weight: 500;
   transition: background-color 0.3s ease;
   user-select: none;
@@ -221,8 +221,8 @@ p {
 .account-text {
   display: flex;
   flex-direction: column;
-  font-size: 30px;
-  width: 70%;
+  font-size: 1em;
+  width: 61%;
   font-family: 'Noto Sans KR', sans-serif;
 }
 
@@ -235,6 +235,7 @@ p {
 .account-number {
   user-select: text;
   margin: 0;
+  margin-top: 3px;
   text-align: left;
 }
 
@@ -242,9 +243,9 @@ p {
   background-color: white;
   border: 0.5px solid black;
   color: black;
-  padding: 6px 23px;
+  padding: 6px 18px;
   border-radius: 20px;
-  font-size: 19px;
+  font-size: 0.7em;
   cursor: pointer;
   user-select: none;
   transition: background-color 0.3s ease;

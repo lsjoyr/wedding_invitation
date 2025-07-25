@@ -548,7 +548,7 @@ function App() {
               계좌번호 복사
             </button>
           </div>
-          <hr style={{margin:'0 35px', borderWidth: 0.1}}></hr>
+          <hr style={{margin:'0 25px', borderWidth: 0.1}}></hr>
           <div className="account-item">
             <div className="account-text">
               <span className="account-name">이승준</span>
@@ -594,7 +594,7 @@ function App() {
               계좌번호 복사
             </button>
           </div>
-          <hr style={{margin:'0 35px', borderWidth: 0.1}}></hr>
+          <hr style={{margin:'0 25px', borderWidth: 0.1}}></hr>
           <div className="account-item">
             <div className="account-text">
               <span className="account-name">오유림</span>
