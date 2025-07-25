@@ -548,7 +548,7 @@ function App() {
               계좌번호 복사
             </button>
           </div>
-          <hr style={{margin:'0 25px', borderWidth: 0.1}}></hr>
+          <hr style={{margin:'0 1.5em', borderWidth: 0.1}}></hr>
           <div className="account-item">
             <div className="account-text">
               <span className="account-name">이승준</span>
@@ -568,7 +568,7 @@ function App() {
           onClick={toggleBrideAccountVisibility}
           aria-expanded={isBrideAccountVisible}
           aria-controls="bride-account-info"
-          style={{ marginTop: '27px' }} // 신랑측과 간격을 위해 margin-top 추가
+          style={{ marginTop: '1em' }} // 신랑측과 간격을 위해 margin-top 추가
         >
           <p className="account-toggle-text">신부측 계좌번호 보기</p>
           <div
@@ -594,7 +594,7 @@ function App() {
               계좌번호 복사
             </button>
           </div>
-          <hr style={{margin:'0 25px', borderWidth: 0.1}}></hr>
+          <hr style={{margin:'0 1.5em', borderWidth: 0.1}}></hr>
           <div className="account-item">
             <div className="account-text">
               <span className="account-name">오유림</span>
