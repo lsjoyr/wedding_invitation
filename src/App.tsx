@@ -12,6 +12,12 @@ import locationBottomMarginImg from './assets/06.jpg'
 import downIconImg from './assets/down_icon.png'
 import './App.css'
 
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import type SwiperType from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
+
 const originalImages = [gallery_img1, gallery_img2, gallery_img3, gallery_img4]
 const extendedImages = [
   originalImages[originalImages.length - 2],
@@ -20,9 +26,6 @@ const extendedImages = [
   originalImages[0],
   originalImages[1],
 ]
-
-const slide_threshold = 30
-const scroll_threshold = 10
 
 declare global {
   interface Window {
@@ -33,25 +36,10 @@ declare global {
 
 function App() {
   const [index, setIndex] = useState(2)
-  const [dragStartX, setDragStartX] = useState<number | null>(null)
-  const [dragOffset, setDragOffset] = useState(0)
-  const [isTransitioning, setIsTransitioning] = useState(false)
-  const [isModalTransitioning, setIsModalTransitioning] = useState(false)
-  const [dragging, setDragging] = useState(false)
+  const [thumbSwiper, setThumbSwiper] = useState<SwiperType | null>(null);
+  const [modalSwiper, setModalSwiper] = useState<SwiperType | null>(null);
+
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
-
-  const trackRef = useRef<HTMLDivElement>(null)
-  const modalTrackRef = useRef<HTMLDivElement>(null)
-  const isTouchingSliderRef = useRef(false)
-  const touchStartYRef = useRef<number | null>(null)
-  const verticalScrollAllowedRef = useRef(false)
-
-  const [modalDragStartX, setModalDragStartX] = useState<number | null>(null)
-  const [modalDragOffset, setModalDragOffset] = useState(0)
-  const [modalDragging, setModalDragging] = useState(false)
-
-  const translateX = `translateX(calc(-${index * 85}% + 7.5% + ${(dragOffset / window.innerWidth) * 100}%))`
-  const modalTranslateX = `translateX(calc(-${expandedIndex! * 100}% + ${(modalDragOffset / window.innerWidth) * 100}%))`
 
   const [isGroomAccountVisible, setIsGroomAccountVisible] = useState(false)
   const [isBrideAccountVisible, setIsBrideAccountVisible] = useState(false)
@@ -89,16 +77,7 @@ function App() {
     }
     window.addEventListener('wheel', handleWheel, { passive: false })
 
-    // 슬라이드 터치 중 세로 스크롤 둔화 & pinch zoom 방지
-    const handleTouchStart = (e: TouchEvent) => {
-      if (!(e.target instanceof HTMLElement)) return
-
-      if (e.target.closest('.slider-track-container')) {
-        isTouchingSliderRef.current = true
-        touchStartYRef.current = e.touches[0].clientY
-        verticalScrollAllowedRef.current = false
-      }
-    }
+    // pinch zoom 방지
     const handleTouchMove = (e: TouchEvent) => {
       if (e.touches.length > 1) {
         const mapElement = document.getElementById('map')
@@ -107,31 +86,8 @@ function App() {
           e.preventDefault()
         }
       }
-
-      if (!isTouchingSliderRef.current) return
-
-      const currentY = e.touches[0].clientY
-      const startY = touchStartYRef.current
-      if (startY == null) return
-
-      const deltaY = Math.abs(currentY - startY)
-
-      if (deltaY > scroll_threshold) {
-        verticalScrollAllowedRef.current = true
-      }
-
-      if (!verticalScrollAllowedRef.current) {
-        e.preventDefault()
-      }
     }
-    const handleTouchEnd = () => {
-      isTouchingSliderRef.current = false
-      touchStartYRef.current = null
-      verticalScrollAllowedRef.current = false
-    }
-    document.addEventListener('touchstart', handleTouchStart, { passive: true })
     document.addEventListener('touchmove', handleTouchMove, { passive: false })
-    document.addEventListener('touchend', handleTouchEnd)
 
     // 확대 슬라이드 중 배경 스크롤 방지
     if (expandedIndex !== null) {
@@ -160,6 +116,15 @@ function App() {
       }
     }
 
+    // 확대 슬라이드 터치 인터벌 강제
+    const handleSwiperTouch = (e: TouchEvent) => {
+      e.preventDefault();
+    };
+    const swiperEl = document.querySelector('.swiper-touch-lock-overlay') as HTMLElement | null;
+    if (swiperEl) {
+      swiperEl.addEventListener('touchstart', handleSwiperTouch, { passive: false });
+    }
+
     // 드롭다운 열릴 때 부드러운 스크롤 이동
     let timeout: ReturnType<typeof setTimeout> | null = null
     if (isGroomAccountVisible) {
@@ -176,174 +141,74 @@ function App() {
     return () => {
       document.head.removeChild(script)
       document.removeEventListener('contextmenu', disableRightClick)
-      document.removeEventListener('touchstart', handleTouchStart)
       document.removeEventListener('touchmove', handleTouchMove)
-      document.removeEventListener('touchend', handleTouchEnd)
+      if (swiperEl) {
+        swiperEl.removeEventListener('touchstart', handleSwiperTouch);
+      }
       window.removeEventListener('wheel', handleWheel)
       if (timeout) clearTimeout(timeout)
     }
   }, [expandedIndex, isGroomAccountVisible, isBrideAccountVisible])
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault()
-    setDragStartX(e.pageX)
-    setDragging(false)
-  }
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (dragStartX === null) return
-    const delta = e.pageX - dragStartX
-    if (Math.abs(delta) > 5) setDragging(true)
-    setDragOffset(delta)
-  }
-
-  const handleMouseUp = () => {
-    if (dragOffset > slide_threshold) goTo(index - 1)
-    else if (dragOffset < -slide_threshold) goTo(index + 1)
-    setDragStartX(null)
-    setDragOffset(0)
-  }
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    e.preventDefault()
-    setDragStartX(e.touches[0].clientX)
-    setDragging(false)
-  }
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (dragStartX === null) return
-    const delta = e.touches[0].clientX - dragStartX
-    if (Math.abs(delta) > 5) setDragging(true)
-    setDragOffset(delta)
-  }
-
-  const handleTouchEnd = () => {
-    if (dragOffset > slide_threshold) goTo(index - 1)
-    else if (dragOffset < -slide_threshold) goTo(index + 1)
-    setDragStartX(null)
-    setDragOffset(0)
-  }
-
-  const goTo = (newIndex: number) => {
-    if (!trackRef.current || isTransitioning) return
-    trackRef.current.style.transition = 'transform 0.4s ease'
-    setIsTransitioning(true)
-    setIndex(newIndex)
-  }
-
-  const handleTransitionEnd = () => {
-    const track = trackRef.current
-    if (!track) return
-
-    setIsTransitioning(false)
-
-    if (index === 1) {
-      track.style.transition = 'none'
-      setIndex(originalImages.length + 1)
-
-      requestAnimationFrame(() => {
-        trackRef.current!.style.transform = `translateX(calc(-${(originalImages.length + 1) * 85}% + 7.5%))`
-      })
-    } else if (index === extendedImages.length - 2) {
-      track.style.transition = 'none'
-      setIndex(2)
-
-      requestAnimationFrame(() => {
-        trackRef.current!.style.transform = `translateX(calc(-170% + 7.5%))`
-      })
-    }
-  }
-
   const onImageClick = (i: number) => {
-    if (!dragging) setExpandedIndex(i)
+    setExpandedIndex(i)
   }
 
   const closeExpanded = () => {
+    if (thumbSwiper) {
+      thumbSwiper.slideToLoop(index, 0)
+    }
     setExpandedIndex(null)
   }
 
-  const handleModalMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault()
-    setModalDragStartX(e.pageX)
-    setModalDragging(false)
-  }
-
-  const handleModalMouseMove = (e: React.MouseEvent) => {
-    if (modalDragStartX === null) return
-    const delta = e.pageX - modalDragStartX
-    if (Math.abs(delta) > 5) setModalDragging(true)
-    setModalDragOffset(delta)
-  }
-
-  const handleModalMouseUp = () => {
-    if (modalDragOffset > slide_threshold) {
-      const next = expandedIndex! - 1
-      goModalTo(next)
-    } else if (modalDragOffset < -slide_threshold) {
-      const next = expandedIndex! + 1
-      goModalTo(next)
-    }
-    setModalDragStartX(null)
-    setModalDragOffset(0)
-  }
-
-  const handleModalTouchStart = (e: React.TouchEvent) => {
-    e.preventDefault()
-    setModalDragStartX(e.touches[0].clientX)
-    setModalDragging(false)
-  }
-
-  const handleModalTouchMove = (e: React.TouchEvent) => {
-    if (modalDragStartX === null) return
-    const delta = e.touches[0].clientX - modalDragStartX
-    if (Math.abs(delta) > 5) setModalDragging(true)
-    setModalDragOffset(delta)
-  }
-
-  const handleModalTouchEnd = () => {
-    if (modalDragOffset > slide_threshold) {
-      const next = expandedIndex! - 1
-      goModalTo(next)
-    } else if (modalDragOffset < -slide_threshold) {
-      const next = expandedIndex! + 1
-      goModalTo(next)
-    }
-    setModalDragStartX(null)
-    setModalDragOffset(0)
-  }
-
-  const goModalTo = (newIndex: number) => {
-    if (!modalTrackRef.current || expandedIndex === null || isModalTransitioning) return
-    modalTrackRef.current.style.transition = 'transform 0.4s ease'
-    setIsModalTransitioning(true)
-    setExpandedIndex(newIndex)
-    setIndex(newIndex)
-  }
-
-  const handleModalTransitionEnd = () => {
-    const modalTrack = modalTrackRef.current
-    if (!modalTrack || expandedIndex === null) return
-
-    setIsModalTransitioning(false)
-
-    if (expandedIndex === 1) {
-      modalTrack.style.transition = 'none'
-      setExpandedIndex(originalImages.length + 1)
-      requestAnimationFrame(() => {
-        modalTrackRef.current!.style.transform = `translateX(calc(-${(originalImages.length + 1) * 100}%))`
-      })
-    } else if (expandedIndex === extendedImages.length - 2) {
-      modalTrack.style.transition = 'none'
-      setExpandedIndex(2)
-      requestAnimationFrame(() => {
-        modalTrackRef.current!.style.transform = `translateX(-200%)`
-      })
-    }
-  }
-
   const onModalImageClick = () => {
-    if (!modalDragging) closeExpanded()
+    closeExpanded()
   }
+
+  const slideQueue = useRef<string[]>([]);
+  const isTransitioning = useRef(false);
+  const processThumbSlide = () => {
+    if (!thumbSwiper || isTransitioning.current || slideQueue.current.length === 0) return;
+
+    const direction = slideQueue.current.shift();
+    if (!direction) return;
+
+    isTransitioning.current = true;
+
+    if (direction === 'next') {
+      thumbSwiper.slideNext();
+    } else {
+      thumbSwiper.slidePrev();
+    }
+
+    thumbSwiper.once('transitionEnd', () => {
+      isTransitioning.current = false;
+      processThumbSlide();
+    });
+  };
+
+  const [isTouchLocked, setIsTouchLocked] = useState(false);
+  const onModalSlideChangeTransitionStart = () => {
+    if (!modalSwiper || !thumbSwiper) return;
+
+    const total = extendedImages.length;
+    const curr = modalSwiper.realIndex;
+    if (curr !== undefined) {
+      const slideNext = curr === index + 1 || (index === total - 1 && curr === 0);
+      const slidePrev = curr === index - 1 || (index === 0 && curr === total - 1);
+
+      if (slideNext) slideQueue.current.push('next');
+      else if (slidePrev) slideQueue.current.push('prev');
+
+      setIndex(curr);
+      processThumbSlide();
+
+      setIsTouchLocked(true);
+      setTimeout(() => {
+        setIsTouchLocked(false);
+      }, 200)
+    }
+  };
 
   const copyAccountNumber = (accountNumber: string) => {
     if (navigator.clipboard) {
@@ -399,81 +264,76 @@ function App() {
           role="img"
           aria-label="gallery title image"
         />
-        <div className="slider-wrapper">
-          <div
-            className="slider-track-container"
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          >
-            <div
-              className="slider-track"
-              ref={trackRef}
-              style={{
-                transform: translateX,
-                transition: dragStartX === null ? 'transform 0.4s ease' : 'none',
-              }}
-              onTransitionEnd={handleTransitionEnd}
-            >
-              {extendedImages.map((img, i) => (
-                <div className="slide" key={i}>
-                  <div
-                    className="slide-image-div"
-                    style={{
-                      backgroundImage: `url(${img})`,
-                      aspectRatio: '780 / 1024',
-                    }}
-                    onContextMenu={(e) => e.preventDefault()}
-                    onClick={() => onImageClick(i)}
-                    role="img"
-                    aria-label={`slide image ${i}`}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        <Swiper
+          initialSlide={index}
+          spaceBetween={10}
+          slidesPerView={1.3}
+          centeredSlides={true}
+          onSwiper={setThumbSwiper}
+          onSlideChange={(swiper) => setIndex(swiper.realIndex)}
+          loop={true}
+        >
+          {extendedImages.map((img, i) => (
+            <SwiperSlide key={i}>
+              <div
+                className="slide-image-div"
+                style={{
+                  backgroundImage: `url(${img})`,
+                  backgroundSize: 'contain',
+                  aspectRatio: '780 / 1024',
+                }}
+                onContextMenu={(e) => e.preventDefault()}
+                onClick={() => onImageClick(i)}
+                role="img"
+                aria-label={`slide image ${i}`}
+              />
+            </SwiperSlide>
+          ))}
+        </Swiper>
 
         {expandedIndex !== null && (
           <div
             className="modal"
-            onMouseDown={handleModalMouseDown}
-            onMouseMove={handleModalMouseMove}
-            onMouseUp={handleModalMouseUp}
-            onMouseLeave={handleModalMouseUp}
-            onTouchStart={handleModalTouchStart}
-            onTouchMove={handleModalTouchMove}
-            onTouchEnd={handleModalTouchEnd}
             onClick={() => onModalImageClick()}
           >
-            <div
-              className="modal-track"
-              ref={modalTrackRef}
-              style={{ transform: modalTranslateX }}
-              onTransitionEnd={handleModalTransitionEnd}
+            {isTouchLocked && (
+              <div
+                className="swiper-touch-lock-overlay"
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  zIndex: 1000,
+                  touchAction: 'none',
+                }}
+              />
+            )}
+            <Swiper
+              initialSlide={expandedIndex}
+              spaceBetween={0}
+              slidesPerView={1}
+              centeredSlides={true}
+              onSlideChangeTransitionStart={onModalSlideChangeTransitionStart}
+              onSwiper={setModalSwiper}
+              loop={true}
+              style={{ width: '100%', height: '60%' }}
             >
               {extendedImages.map((img, i) => (
-                <div className="modal-slide" key={i}>
+                <SwiperSlide key={i} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                   <div
                     className="slide-image-div"
                     style={{
-                      height: '100%',
-                      maxWidth: '90%',
                       backgroundImage: `url(${img})`,
+                      backgroundSize: 'contain',
                       aspectRatio: '780 / 1024',
-
+                      height: '100%',
                     }}
                     onContextMenu={(e) => e.preventDefault()}
                     role="img"
                     aria-label={`modal image ${i}`}
                   />
-                </div>
+                </SwiperSlide>
               ))}
-            </div>
+            </Swiper>
             <div className="modal-fixed-caption">
               옆으로 넘기시면 더 많은 사진을 볼 수 있습니다.
             </div>
@@ -548,7 +408,7 @@ function App() {
               계좌번호 복사
             </button>
           </div>
-          <hr style={{margin:'0 1.5em', borderWidth: 0.1}}></hr>
+          <hr style={{ margin: '0 1.5em', borderWidth: 0.1 }}></hr>
           <div className="account-item">
             <div className="account-text">
               <span className="account-name">이승준</span>
@@ -594,7 +454,7 @@ function App() {
               계좌번호 복사
             </button>
           </div>
-          <hr style={{margin:'0 1.5em', borderWidth: 0.1}}></hr>
+          <hr style={{ margin: '0 1.5em', borderWidth: 0.1 }}></hr>
           <div className="account-item">
             <div className="account-text">
               <span className="account-name">오유림</span>

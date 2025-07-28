@@ -28,8 +28,9 @@ p {
   touch-action: manipulation;
 }
 
-.slide>.slide-image-div,
-.modal-slide>.slide-image-div {
+/* 축소 슬라이드 영역 */
+.slide-image-div,
+.slide-image-div {
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -37,47 +38,19 @@ p {
   overflow: hidden;
 
   user-select: none;
+  -webkit-user-drag: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
   touch-action: manipulation;
-  -webkit-user-drag: none;
 
   pointer-events: auto;
 }
 
+/* 확대 슬라이드 영역 */
 .no-overscroll {
   overflow: hidden;
   overscroll-behavior: none;
   touch-action: none;
-  /* 터치 이벤트 스크롤 방지에 도움 */
-}
-
-.slider-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  overflow: hidden;
-  user-select: none;
-}
-
-.slider-track-container {
-  overflow: hidden;
-  width: 100%;
-  padding: 0 7.5%;
-  box-sizing: border-box;
-}
-
-.slider-track {
-  display: flex;
-  transition: transform 0.4s ease;
-  will-change: transform;
-}
-
-.slide {
-  flex: 0 0 82%;
-  margin: 0 1.5%;
-  box-sizing: border-box;
 }
 
 .modal {
@@ -93,14 +66,12 @@ p {
   flex-direction: column;
   overflow: hidden;
   z-index: 9999;
-}
 
-.modal-track {
-  display: flex;
-  height: 60%;
-  width: 100%;
-  transition: transform 0.4s ease;
-  align-items: center;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
 }
 
 .modal-fixed-caption {
@@ -113,15 +84,6 @@ p {
   text-align: center;
   z-index: 10000;
   pointer-events: none;
-}
-
-
-.modal-slide {
-  flex: 0 0 100%;
-  display: flex;
-  height: 100%;
-  justify-content: center;
-  align-items: center;
 }
 
 .close-button {
