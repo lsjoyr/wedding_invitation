@@ -231,7 +231,7 @@ function App() {
           className="bg-image-div"
           style={{
             width: '100%',
-            maxWidth: 800,
+            maxWidth: 430,
             aspectRatio: 800 / 1423,
             backgroundImage: `url(${introImg})`,
           }}
@@ -244,7 +244,7 @@ function App() {
           className="bg-image-div"
           style={{
             width: '100%',
-            maxWidth: 800,
+            maxWidth: 430,
             aspectRatio: '800 / 1122',
             backgroundImage: `url(${welcomeImg})`,
           }}
@@ -257,7 +257,7 @@ function App() {
           className="bg-image-div"
           style={{
             width: '100%',
-            maxWidth: 800,
+            maxWidth: 430,
             aspectRatio: '800 / 361',
             backgroundImage: `url(${galleryTitleImg})`,
           }}
@@ -344,7 +344,7 @@ function App() {
           className="bg-image-div"
           style={{
             width: '100%',
-            maxWidth: 800,
+            maxWidth: 430,
             aspectRatio: 800 / 176,
             backgroundImage: `url(${galleryBottomMarginImg})`,
           }}
@@ -357,19 +357,19 @@ function App() {
           className="bg-image-div"
           style={{
             width: '100%',
-            maxWidth: 800,
+            maxWidth: 430,
             aspectRatio: 800 / 503,
             backgroundImage: `url(${locationTitleImg})`,
           }}
           role="img"
           aria-label="intro image"
         />
-        <div id="map" style={{ width: '100%', height: '300px', maxWidth: 800, margin: '0 auto' }}></div>
+        <div id="map" style={{ width: '100%', height: '300px', maxWidth: 430, margin: '0 auto' }}></div>
         <div
           className="bg-image-div"
           style={{
             width: '100%',
-            maxWidth: 800,
+            maxWidth: 430,
             aspectRatio: 800 / 176,
             backgroundImage: `url(${locationBottomMarginImg})`,
           }}
