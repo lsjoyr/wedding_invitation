@@ -454,12 +454,12 @@ function App() {
           <hr style={{ margin: '0 1.5em', borderWidth: 0.1 }}></hr>
           <div className="account-item">
             <div className="account-text">
-              <span className="account-name">이승준</span>
-              <span className="account-number">신한은행 110-159-100961</span>
+              <span className="account-name">김수진</span>
+              <span className="account-number">우체국 013755-02-124659</span>
             </div>
             <button
               className="copy-button"
-              onClick={() => copyAccountNumber('110159100961')}
+              onClick={() => copyAccountNumber('01375502124659')}
               aria-label="계좌번호 복사"
             >
               계좌번호 복사
@@ -471,7 +471,7 @@ function App() {
           onClick={toggleBrideAccountVisibility}
           aria-expanded={isBrideAccountVisible}
           aria-controls="bride-account-info"
-          style={{ marginTop: '1em' }} // 신랑측과 간격을 위해 margin-top 추가
+          style={{ marginTop: '1em' }}
         >
           <p className="account-toggle-text">신부측 계좌번호 보기</p>
           <div
@@ -500,12 +500,12 @@ function App() {
           <hr style={{ margin: '0 1.5em', borderWidth: 0.1 }}></hr>
           <div className="account-item">
             <div className="account-text">
-              <span className="account-name">오유림</span>
-              <span className="account-number">국민은행 97707211070</span>
+              <span className="account-name">한현순</span>
+              <span className="account-number">농협 158-02-076007</span>
             </div>
             <button
               className="copy-button"
-              onClick={() => copyAccountNumber('110159100961')}
+              onClick={() => copyAccountNumber('15802076007')}
               aria-label="계좌번호 복사"
             >
               계좌번호 복사
