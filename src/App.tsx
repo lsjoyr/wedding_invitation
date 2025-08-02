@@ -151,6 +151,22 @@ function App() {
     }
   }, [expandedIndex])
 
+  const onThumbSlideChange = () => {
+    if (thumbSwiper) {
+      setIndex(thumbSwiper.realIndex)
+
+      const marginTargetDiv = document.querySelector('div[data-swiper-slide-index="24"]') as HTMLElement;
+      if (marginTargetDiv) {
+        marginTargetDiv.style.marginTop = 'auto';
+        marginTargetDiv.style.marginBottom = 'auto';
+      }
+      const ratioTargetDiv = document.querySelector('div[aria-label="slide image 24"]') as HTMLElement;
+      if (ratioTargetDiv) {
+        ratioTargetDiv.style.aspectRatio = '1000 / 667';
+      }
+    }
+  }
+
   const onImageClick = (i: number) => {
     setExpandedIndex(i)
   }
@@ -190,6 +206,13 @@ function App() {
 
   const [isTouchLocked, setIsTouchLocked] = useState(false);
   const onModalSlideChangeTransitionStart = () => {
+    const ratioTargetDiv = document.querySelector('div[aria-label="modal image 24"]') as HTMLElement;
+    if (ratioTargetDiv) {
+      ratioTargetDiv.style.aspectRatio = '1000 / 667';
+      ratioTargetDiv.style.height = '';
+      ratioTargetDiv.style.width = '87%';
+    }
+
     if (!modalSwiper || !thumbSwiper) return;
 
     const total = extendedImages.length;
@@ -290,7 +313,7 @@ function App() {
           slidesPerView={1.4}
           centeredSlides={true}
           onSwiper={setThumbSwiper}
-          onSlideChange={(swiper) => setIndex(swiper.realIndex)}
+          onSlideChange={onThumbSlideChange}
           loop={true}
         >
           {extendedImages.map((img, i) => (
