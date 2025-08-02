@@ -8,6 +8,9 @@ import gallery_img3 from './assets/g3.jpg'
 import gallery_img4 from './assets/g4.jpg'
 import galleryBottomMarginImg from './assets/04.jpg'
 import locationTitleImg from './assets/05.jpg'
+import navImgNaver from './assets/nav_naver.png'
+import navImgTmap from './assets/nav_tmap.png'
+import navImgKakao from './assets/nav_kakao.png'
 import locationBottomMarginImg from './assets/06.jpg'
 import downIconImg from './assets/down_icon.png'
 import './App.css'
@@ -32,7 +35,6 @@ declare global {
     naver: any
   }
 }
-
 
 function App() {
   const [index, setIndex] = useState(2)
@@ -97,8 +99,6 @@ function App() {
 
     script.onload = () => {
       if (window.naver && document.getElementById('map')) {
-        const lat = 37.560635
-        const lng = 126.967385
         const map = new window.naver.maps.Map('map', {
           center: new window.naver.maps.LatLng(lat, lng),
           zoom: 17
@@ -189,6 +189,68 @@ function App() {
       }, 200)
     }
   };
+
+  const dname = '루이비스웨딩 중구점'
+  const lat = 37.560635
+  const lng = 126.967385
+
+  function getMobileOS(): 'android' | 'ios' | 'unknown' {
+    const ua = navigator.userAgent.toLowerCase();
+    if (/android/.test(ua)) return 'android';
+    if (/iphone|ipad|ipod/.test(ua)) return 'ios';
+    return 'unknown';
+  }
+
+  interface AppLinkInfo {
+    name: string;
+    appUrl: string;
+    androidStoreUrl: string;
+    iosStoreUrl: string;
+  }
+
+  function getAppLinks(): AppLinkInfo[] {
+    const encodedName = encodeURIComponent(dname);
+    return [
+      {
+        name: '네이버지도',
+        appUrl: `nmap://route/car?dlat=${lat}&dlng=${lng}&dname=${encodedName}`,
+        androidStoreUrl: 'https://play.google.com/store/apps/details?id=com.nhn.android.nmap',
+        iosStoreUrl: 'https://apps.apple.com/kr/app/id311867728'
+      },
+      {
+        name: '티맵',
+        appUrl: `tmap://route?goalx=${lng}&goaly=${lat}&goalname=${encodedName}`,
+        androidStoreUrl: 'https://play.google.com/store/apps/details?id=com.skt.tmap.ku',
+        iosStoreUrl: 'https://apps.apple.com/kr/app/id431589174'
+      },
+      {
+        name: '카카오내비',
+        appUrl: `kakaonavi://navigate?name=${encodedName}&x=${lng}&y=${lat}`,
+        androidStoreUrl: 'https://play.google.com/store/apps/details?id=com.locnall.KimGiSa',
+        iosStoreUrl: 'https://apps.apple.com/kr/app/id417698849'
+      }
+    ];
+  }
+
+  function openNavApp(i: number) {
+    const os = getMobileOS();
+    const appLinks = getAppLinks();
+
+    const link = appLinks[i]
+    const appUrl = link.appUrl
+    const fallbackUrl = os === 'ios' ? link.iosStoreUrl : link.androidStoreUrl
+
+    const now = Date.now();
+    setTimeout(() => {
+      const elapsed = Date.now() - now;
+      if (elapsed < 2000) {
+        window.location.href = fallbackUrl;
+      }
+    }, 1500);
+
+    window.location.href = appUrl;
+  }
+
 
   const toggleGroomAccountVisibility = () => {
     const next = !isGroomAccountVisible
@@ -364,6 +426,20 @@ function App() {
           aria-label="intro image"
         />
         <div id="map" style={{ width: '100%', height: '300px', maxWidth: 430, margin: '0 auto' }}></div>
+        <div id="nav">
+          <div className="nav_box nav_naver" onClick={() => openNavApp(0)}>
+            <img id='nav_img_naver' src={navImgNaver} />
+            네이버 지도
+          </div>
+          <div className="nav_box nav_tmap" onClick={() => openNavApp(1)}>
+            <img id='nav_img_tmap' src={navImgTmap} />
+            티맵
+          </div>
+          <div className="nav_box nav_kakao" onClick={() => openNavApp(2)}>
+            <img id='nav_img_kakao' src={navImgKakao} />
+            카카오내비
+          </div>
+        </div>
         <div
           className="bg-image-div"
           style={{

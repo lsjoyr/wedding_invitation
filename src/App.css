@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300&display=swap');
 
-html, body {
+html,
+body {
   max-width: 430px;
   margin: 0 auto;
   width: 100%;
@@ -92,6 +93,52 @@ p {
   background: none;
   border: none;
   cursor: pointer;
+}
+
+#nav {
+  height: 47px;
+  width: 90%;
+  margin: 25px auto 0;
+}
+
+.nav_box {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 14PX;
+  text-align: center;
+  border-radius: 10px;
+  color: #333333;
+  border: 1px solid #E4E4E4;
+  width: 31%;
+  height: 45px;
+  line-height: 45px;
+}
+
+.nav_naver {
+  float: left;
+}
+
+#nav_img_naver {
+  width: 20px;
+  vertical-align: -4px;
+}
+
+.nav_tmap {
+  float: left;
+  margin-left: 2.5%;
+}
+
+#nav_img_tmap {
+  width: 22px;
+  vertical-align: -6px;
+}
+
+.nav_kakao {
+  float: right;
+}
+
+#nav_img_kakao {
+  width: 22px;
+  vertical-align: -6px;
 }
 
 /* gift 영역 컨테이너 */
