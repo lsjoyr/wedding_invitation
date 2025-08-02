@@ -252,7 +252,7 @@ function App() {
           style={{
             width: '100%',
             maxWidth: 430,
-            aspectRatio: 800 / 1423,
+            aspectRatio: 800 / 1370,
             backgroundImage: `url(${introImg})`,
           }}
           role="img"

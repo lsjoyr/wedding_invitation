@@ -13,7 +13,7 @@ p {
 
 .bg-image-div {
   display: block;
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   overflow: hidden;
