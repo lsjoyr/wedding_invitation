@@ -39,7 +39,9 @@ import 'swiper/css/pagination';
 import type SwiperType from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-const originalImages = [gallery_img1, gallery_img2, gallery_img3, gallery_img4, gallery_img5, gallery_img6, gallery_img7, gallery_img8, gallery_img9, gallery_img10, gallery_img11, gallery_img12, gallery_img13, gallery_img14, gallery_img15, gallery_img16, gallery_img17, gallery_img18, gallery_img19, gallery_img20, gallery_img21, gallery_img22, gallery_img23, gallery_img24, gallery_img25]
+const originalImages = [
+  gallery_img1, gallery_img2, gallery_img3, gallery_img4, gallery_img5, gallery_img6, gallery_img7, gallery_img8, gallery_img9, gallery_img10, gallery_img11, gallery_img12, gallery_img13, gallery_img14, gallery_img15, gallery_img16, gallery_img17, gallery_img18, gallery_img19, gallery_img20, gallery_img21, gallery_img22, gallery_img23, gallery_img24, gallery_img25
+]
 
 declare global {
   interface Window {

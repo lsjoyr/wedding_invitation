@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300&display=swap');
 
-html, body {
+html,
+body {
   max-width: 430px;
   margin: 0 auto;
   width: 100%;
@@ -26,6 +27,14 @@ p {
 }
 
 /* 축소 슬라이드 영역 */
+.swiper-wrapper {
+  transform: translate3d(0, 0, 0);
+}
+
+.swiper-slide {
+  will-change: transform;
+}
+
 .slide-image-div,
 .slide-image-div {
   background-size: contain;
