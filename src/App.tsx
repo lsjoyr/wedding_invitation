@@ -40,13 +40,6 @@ import type SwiperType from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 const originalImages = [gallery_img1, gallery_img2, gallery_img3, gallery_img4, gallery_img5, gallery_img6, gallery_img7, gallery_img8, gallery_img9, gallery_img10, gallery_img11, gallery_img12, gallery_img13, gallery_img14, gallery_img15, gallery_img16, gallery_img17, gallery_img18, gallery_img19, gallery_img20, gallery_img21, gallery_img22, gallery_img23, gallery_img24, gallery_img25]
-const extendedImages = [
-  originalImages[originalImages.length - 2],
-  originalImages[originalImages.length - 1],
-  ...originalImages,
-  originalImages[0],
-  originalImages[1],
-]
 
 declare global {
   interface Window {
@@ -56,7 +49,7 @@ declare global {
 
 
 function App() {
-  const [index, setIndex] = useState(2)
+  const [index, setIndex] = useState(0)
   const [thumbSwiper, setThumbSwiper] = useState<SwiperType | null>(null);
   const [modalSwiper, setModalSwiper] = useState<SwiperType | null>(null);
 
@@ -155,12 +148,12 @@ function App() {
     if (thumbSwiper) {
       setIndex(thumbSwiper.realIndex)
 
-      const marginTargetDiv = document.querySelector('div[data-swiper-slide-index="24"]') as HTMLElement;
+      const marginTargetDiv = document.querySelector('div[data-swiper-slide-index="22"]') as HTMLElement;
       if (marginTargetDiv) {
         marginTargetDiv.style.marginTop = 'auto';
         marginTargetDiv.style.marginBottom = 'auto';
       }
-      const ratioTargetDiv = document.querySelector('div[aria-label="slide image 24"]') as HTMLElement;
+      const ratioTargetDiv = document.querySelector('div[aria-label="slide image 22"]') as HTMLElement;
       if (ratioTargetDiv) {
         ratioTargetDiv.style.aspectRatio = '1000 / 667';
       }
@@ -206,7 +199,7 @@ function App() {
 
   const [isTouchLocked, setIsTouchLocked] = useState(false);
   const onModalSlideChangeTransitionStart = () => {
-    const ratioTargetDiv = document.querySelector('div[aria-label="modal image 24"]') as HTMLElement;
+    const ratioTargetDiv = document.querySelector('div[aria-label="modal image 22"]') as HTMLElement;
     if (ratioTargetDiv) {
       ratioTargetDiv.style.aspectRatio = '1000 / 667';
       ratioTargetDiv.style.height = '';
@@ -215,7 +208,7 @@ function App() {
 
     if (!modalSwiper || !thumbSwiper) return;
 
-    const total = extendedImages.length;
+    const total = originalImages.length;
     const curr = modalSwiper.realIndex;
     if (curr !== undefined) {
       const slideNext = curr === index + 1 || (index === total - 1 && curr === 0);
@@ -316,7 +309,7 @@ function App() {
           onSlideChange={onThumbSlideChange}
           loop={true}
         >
-          {extendedImages.map((img, i) => (
+          {originalImages.map((img, i) => (
             <SwiperSlide key={i}>
               <div
                 className="slide-image-div"
@@ -360,7 +353,7 @@ function App() {
               loop={true}
               style={{ width: '100%', height: '60%' }}
             >
-              {extendedImages.map((img, i) => (
+              {originalImages.map((img, i) => (
                 <SwiperSlide key={i} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                   <div
                     className="slide-image-div"
