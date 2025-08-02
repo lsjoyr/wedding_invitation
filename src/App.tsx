@@ -45,12 +45,6 @@ function App() {
   const [isBrideAccountVisible, setIsBrideAccountVisible] = useState(false)
   const groomAccountRef = useRef<HTMLDivElement>(null)
   const brideAccountRef = useRef<HTMLDivElement>(null)
-  const toggleGroomAccountVisibility = () => {
-    setIsGroomAccountVisible(prev => !prev)
-  }
-  const toggleBrideAccountVisibility = () => {
-    setIsBrideAccountVisible(prev => !prev)
-  }
 
   useEffect(() => {
     // 이미지 드래그 방지
@@ -125,19 +119,6 @@ function App() {
       swiperEl.addEventListener('touchstart', handleSwiperTouch, { passive: false });
     }
 
-    // 드롭다운 열릴 때 부드러운 스크롤 이동
-    let timeout: ReturnType<typeof setTimeout> | null = null
-    if (isGroomAccountVisible) {
-      timeout = setTimeout(() => {
-        groomAccountRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }, 400)
-    }
-    if (isBrideAccountVisible) {
-      timeout = setTimeout(() => {
-        brideAccountRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }, 400)
-    }
-
     return () => {
       document.head.removeChild(script)
       document.removeEventListener('contextmenu', disableRightClick)
@@ -146,9 +127,8 @@ function App() {
         swiperEl.removeEventListener('touchstart', handleSwiperTouch);
       }
       window.removeEventListener('wheel', handleWheel)
-      if (timeout) clearTimeout(timeout)
     }
-  }, [expandedIndex, isGroomAccountVisible, isBrideAccountVisible])
+  }, [expandedIndex])
 
   const onImageClick = (i: number) => {
     setExpandedIndex(i)
@@ -209,6 +189,25 @@ function App() {
       }, 200)
     }
   };
+
+  const toggleGroomAccountVisibility = () => {
+    const next = !isGroomAccountVisible
+    setIsGroomAccountVisible(next)
+    if (!next) return // 닫을 땐 스크롤 안함
+
+    setTimeout(() => {
+      groomAccountRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 400)
+  }
+  const toggleBrideAccountVisibility = () => {
+    const next = !isBrideAccountVisible
+    setIsBrideAccountVisible(next)
+    if (!next) return // 닫을 땐 스크롤 안함
+
+    setTimeout(() => {
+      brideAccountRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 400)
+  }
 
   const copyAccountNumber = (accountNumber: string) => {
     if (navigator.clipboard) {
