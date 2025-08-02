@@ -6,6 +6,27 @@ import gallery_img1 from './assets/g1.jpg'
 import gallery_img2 from './assets/g2.jpg'
 import gallery_img3 from './assets/g3.jpg'
 import gallery_img4 from './assets/g4.jpg'
+import gallery_img5 from './assets/g5.jpg'
+import gallery_img6 from './assets/g6.jpg'
+import gallery_img7 from './assets/g7.jpg'
+import gallery_img8 from './assets/g8.jpg'
+import gallery_img9 from './assets/g9.jpg'
+import gallery_img10 from './assets/g10.jpg'
+import gallery_img11 from './assets/g11.jpg'
+import gallery_img12 from './assets/g12.jpg'
+import gallery_img13 from './assets/g13.jpg'
+import gallery_img14 from './assets/g14.jpg'
+import gallery_img15 from './assets/g15.jpg'
+import gallery_img16 from './assets/g16.jpg'
+import gallery_img17 from './assets/g17.jpg'
+import gallery_img18 from './assets/g18.jpg'
+import gallery_img19 from './assets/g19.jpg'
+import gallery_img20 from './assets/g20.jpg'
+import gallery_img21 from './assets/g21.jpg'
+import gallery_img22 from './assets/g22.jpg'
+import gallery_img23 from './assets/g23.jpg'
+import gallery_img24 from './assets/g24.jpg'
+import gallery_img25 from './assets/g25.jpg'
 import galleryBottomMarginImg from './assets/04.jpg'
 import locationTitleImg from './assets/05.jpg'
 import locationBottomMarginImg from './assets/06.jpg'
@@ -18,7 +39,7 @@ import 'swiper/css/pagination';
 import type SwiperType from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-const originalImages = [gallery_img1, gallery_img2, gallery_img3, gallery_img4]
+const originalImages = [gallery_img1, gallery_img2, gallery_img3, gallery_img4, gallery_img5, gallery_img6, gallery_img7, gallery_img8, gallery_img9, gallery_img10, gallery_img11, gallery_img12, gallery_img13, gallery_img14, gallery_img15, gallery_img16, gallery_img17, gallery_img18, gallery_img19, gallery_img20, gallery_img21, gallery_img22, gallery_img23, gallery_img24, gallery_img25]
 const extendedImages = [
   originalImages[originalImages.length - 2],
   originalImages[originalImages.length - 1],
@@ -266,7 +287,7 @@ function App() {
         <Swiper
           initialSlide={index}
           spaceBetween={10}
-          slidesPerView={1.3}
+          slidesPerView={1.4}
           centeredSlides={true}
           onSwiper={setThumbSwiper}
           onSlideChange={(swiper) => setIndex(swiper.realIndex)}
@@ -279,7 +300,7 @@ function App() {
                 style={{
                   backgroundImage: `url(${img})`,
                   backgroundSize: 'contain',
-                  aspectRatio: '780 / 1024',
+                  aspectRatio: '800 / 1200',
                 }}
                 onContextMenu={(e) => e.preventDefault()}
                 onClick={() => onImageClick(i)}
@@ -323,7 +344,7 @@ function App() {
                     style={{
                       backgroundImage: `url(${img})`,
                       backgroundSize: 'contain',
-                      aspectRatio: '780 / 1024',
+                      aspectRatio: '800 / 1200',
                       height: '100%',
                     }}
                     onContextMenu={(e) => e.preventDefault()}
