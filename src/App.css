@@ -264,6 +264,14 @@ p {
 }
 
 #kakaotalk {
+  margin: 20px 0;
   font-family: 'Noto Sans KR', sans-serif;
+  text-align: center;
+}
+
+#copyright {
+  margin-bottom: 10px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 10px;
   text-align: center;
 }
