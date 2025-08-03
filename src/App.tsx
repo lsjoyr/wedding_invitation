@@ -206,6 +206,7 @@ function App() {
     appUrl: string;
     androidStoreUrl: string;
     iosStoreUrl: string;
+    mapUrl: string;
   }
 
   function getAppLinks(): AppLinkInfo[] {
@@ -215,19 +216,22 @@ function App() {
         name: '네이버지도',
         appUrl: `nmap://route/car?dlat=${lat}&dlng=${lng}&dname=${encodedName}`,
         androidStoreUrl: 'https://play.google.com/store/apps/details?id=com.nhn.android.nmap',
-        iosStoreUrl: 'https://apps.apple.com/kr/app/id311867728'
+        iosStoreUrl: 'https://apps.apple.com/kr/app/id311867728',
+        mapUrl: `https://map.naver.com/v5/search/${encodedName}`
       },
       {
         name: '티맵',
         appUrl: `tmap://route?goalx=${lng}&goaly=${lat}&goalname=${encodedName}`,
         androidStoreUrl: 'https://play.google.com/store/apps/details?id=com.skt.tmap.ku',
-        iosStoreUrl: 'https://apps.apple.com/kr/app/id431589174'
+        iosStoreUrl: 'https://apps.apple.com/kr/app/id431589174',
+        mapUrl: `https://map.naver.com/v5/search/${encodedName}`
       },
       {
         name: '카카오내비',
         appUrl: `kakaonavi://navigate?name=${encodedName}&x=${lng}&y=${lat}`,
         androidStoreUrl: 'https://play.google.com/store/apps/details?id=com.locnall.KimGiSa',
-        iosStoreUrl: 'https://apps.apple.com/kr/app/id417698849'
+        iosStoreUrl: 'https://apps.apple.com/kr/app/id417698849',
+        mapUrl: `https://map.naver.com/v5/search/${encodedName}`
       }
     ];
   }
@@ -238,17 +242,32 @@ function App() {
 
     const link = appLinks[i]
     const appUrl = link.appUrl
-    const fallbackUrl = os === 'ios' ? link.iosStoreUrl : link.androidStoreUrl
 
-    const now = Date.now();
+    let fallbackUrl = ''
+    if (os === 'ios') {
+      fallbackUrl = link.iosStoreUrl;
+    } else if (os === 'android') {
+      fallbackUrl = link.androidStoreUrl;
+    } else {
+      fallbackUrl = link.mapUrl;
+    }
+    const openedWindow = window.open(appUrl, '_blank');
+
+    const fallback_timer = 3000
     setTimeout(() => {
-      const elapsed = Date.now() - now;
-      if (elapsed < 2000) {
-        window.location.href = fallbackUrl;
+      // 일부 브라우저에서는 앱이 열리면 openedWindow 가 null 이 아님에도 불구하고 닫히지 않음
+      if (openedWindow) {
+        try {
+          openedWindow.location.href = fallbackUrl;
+        } catch (e) {
+          // Safari나 일부 브라우저는 cross-origin 때문에 에러날 수 있으니 직접 열기
+          window.open(fallbackUrl, '_blank');
+        }
+      } else {
+        // pop-up blocker 때문에 열리지 않은 경우 등
+        window.open(fallbackUrl, '_blank');
       }
-    }, 1500);
-
-    window.location.href = appUrl;
+    }, fallback_timer);
   }
 
 
