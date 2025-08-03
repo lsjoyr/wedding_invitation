@@ -228,7 +228,7 @@ function App() {
       },
       {
         name: '카카오내비',
-        appUrl: `kakaonavi://navigate?name=${encodedName}&x=${lng}&y=${lat}`,
+        appUrl: `kakaonavi://navigate?dest_lat=${lat}&dest_lng=${lng}&dest_name=${encodedName}`,
         androidStoreUrl: 'https://play.google.com/store/apps/details?id=com.locnall.KimGiSa',
         iosStoreUrl: 'https://apps.apple.com/kr/app/id417698849',
         mapUrl: `https://map.naver.com/v5/search/${encodedName}`
