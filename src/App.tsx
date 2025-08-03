@@ -36,6 +36,8 @@ declare global {
   }
 }
 
+declare const Kakao: any
+
 function App() {
   const [index, setIndex] = useState(2)
   const [thumbSwiper, setThumbSwiper] = useState<SwiperType | null>(null);
@@ -92,12 +94,11 @@ function App() {
       document.body.classList.remove('no-overscroll')
     }
 
-    const script = document.createElement('script')
-    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${import.meta.env.VITE_NAVER_MAP_CLIENT_ID}`
-    script.async = true
-    document.head.appendChild(script)
-
-    script.onload = () => {
+    const map_script = document.createElement('script')
+    map_script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${import.meta.env.VITE_NAVER_MAP_CLIENT_ID}`
+    map_script.async = true
+    document.head.appendChild(map_script)
+    map_script.onload = () => {
       if (window.naver && document.getElementById('map')) {
         const map = new window.naver.maps.Map('map', {
           center: new window.naver.maps.LatLng(lat, lng),
@@ -110,6 +111,16 @@ function App() {
       }
     }
 
+    const kakao_navi_script = document.createElement('script')
+    kakao_navi_script.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.5/kakao.min.js'
+    kakao_navi_script.integrity = 'sha384-dok87au0gKqJdxs7msEdBPNnKSRT+/mhTVzq+qOhcL464zXwvcrpjeWvyj1kCdq6'
+    kakao_navi_script.crossOrigin = 'anonymous'
+    kakao_navi_script.async = true
+    document.head.appendChild(kakao_navi_script)
+    kakao_navi_script.onload = () => {
+      Kakao.init(`${import.meta.env.VITE_KAKAO_APP_KEY}`)
+    }
+
     // 확대 슬라이드 터치 인터벌 강제
     const handleSwiperTouch = (e: TouchEvent) => {
       e.preventDefault();
@@ -120,7 +131,7 @@ function App() {
     }
 
     return () => {
-      document.head.removeChild(script)
+      document.head.removeChild(map_script)
       document.removeEventListener('contextmenu', disableRightClick)
       document.removeEventListener('touchmove', handleTouchMove)
       if (swiperEl) {
@@ -201,73 +212,50 @@ function App() {
     return 'unknown';
   }
 
-  interface AppLinkInfo {
-    name: string;
-    appUrl: string;
-    androidStoreUrl: string;
-    iosStoreUrl: string;
-    mapUrl: string;
-  }
-
-  function getAppLinks(): AppLinkInfo[] {
+  function openNavApp(appName: string) {
     const encodedName = encodeURIComponent(dname);
-    return [
-      {
-        name: '네이버지도',
-        appUrl: `nmap://route/car?dlat=${lat}&dlng=${lng}&dname=${encodedName}`,
-        androidStoreUrl: 'https://play.google.com/store/apps/details?id=com.nhn.android.nmap',
-        iosStoreUrl: 'https://apps.apple.com/kr/app/id311867728',
-        mapUrl: `https://map.naver.com/v5/search/${encodedName}`
-      },
-      {
-        name: '티맵',
-        appUrl: `tmap://route?goalx=${lng}&goaly=${lat}&goalname=${encodedName}`,
-        androidStoreUrl: 'https://play.google.com/store/apps/details?id=com.skt.tmap.ku',
-        iosStoreUrl: 'https://apps.apple.com/kr/app/id431589174',
-        mapUrl: `https://map.naver.com/v5/search/${encodedName}`
-      },
-      {
-        name: '카카오내비',
-        appUrl: `kakaonavi://navigate?dest_lat=${lat}&dest_lng=${lng}&dest_name=${encodedName}`,
-        androidStoreUrl: 'https://play.google.com/store/apps/details?id=com.locnall.KimGiSa',
-        iosStoreUrl: 'https://apps.apple.com/kr/app/id417698849',
-        mapUrl: `https://map.naver.com/v5/search/${encodedName}`
+    if (appName === "naver") {
+      const appUrl = `nmap://route/car?dlat=${lat}&dlng=${lng}&dname=${encodedName}`
+      const openedWindow = window.open(appUrl, '_blank');
+
+      const os = getMobileOS()
+      let fallbackUrl = ''
+      if (os === 'ios') {
+        fallbackUrl = 'https://apps.apple.com/kr/app/id311867728';
+      } else if (os === 'android') {
+        fallbackUrl = 'https://play.google.com/store/apps/details?id=com.nhn.android.nmap';
+      } else {
+        fallbackUrl = `https://map.naver.com/v5/search/${encodedName}`;
       }
-    ];
-  }
 
-  function openNavApp(i: number) {
-    const os = getMobileOS();
-    const appLinks = getAppLinks();
-
-    const link = appLinks[i]
-    const appUrl = link.appUrl
-
-    let fallbackUrl = ''
-    if (os === 'ios') {
-      fallbackUrl = link.iosStoreUrl;
-    } else if (os === 'android') {
-      fallbackUrl = link.androidStoreUrl;
-    } else {
-      fallbackUrl = link.mapUrl;
-    }
-    const openedWindow = window.open(appUrl, '_blank');
-
-    const fallback_timer = 3000
-    setTimeout(() => {
-      // 일부 브라우저에서는 앱이 열리면 openedWindow 가 null 이 아님에도 불구하고 닫히지 않음
-      if (openedWindow) {
-        try {
-          openedWindow.location.href = fallbackUrl;
-        } catch (e) {
-          // Safari나 일부 브라우저는 cross-origin 때문에 에러날 수 있으니 직접 열기
+      const fallback_timer = 3000
+      setTimeout(() => {
+        // 일부 브라우저에서는 앱이 열리면 openedWindow 가 null 이 아님에도 불구하고 닫히지 않음
+        if (openedWindow) {
+          try {
+            openedWindow.location.href = fallbackUrl;
+          } catch (e) {
+            // Safari나 일부 브라우저는 cross-origin 때문에 에러날 수 있으니 직접 열기
+            window.open(fallbackUrl, '_blank');
+          }
+        } else {
+          // pop-up blocker 때문에 열리지 않은 경우 등
           window.open(fallbackUrl, '_blank');
         }
-      } else {
-        // pop-up blocker 때문에 열리지 않은 경우 등
-        window.open(fallbackUrl, '_blank');
-      }
-    }, fallback_timer);
+      }, fallback_timer);
+    }
+    else if (appName === "tmap") {
+      const appUrl = `https://apis.openapi.sk.com/tmap/app/routes?appKey=${import.meta.env.VITE_TMAP_APP_KEY}&name=${encodeURIComponent(dname)}&lon=${lng}&lat=${lat}`
+      window.open(appUrl, '_blank');
+    }
+    else if (appName === "kakao") {
+      Kakao.Navi.start({
+        name: dname,
+        x: lng,
+        y: lat,
+        coordType: 'wgs84',
+      });
+    }
   }
 
 
@@ -446,15 +434,15 @@ function App() {
         />
         <div id="map" style={{ width: '100%', height: '300px', maxWidth: 430, margin: '0 auto' }}></div>
         <div id="nav">
-          <div className="nav_box nav_naver" onClick={() => openNavApp(0)}>
+          <div className="nav_box nav_naver" onClick={() => openNavApp("naver")}>
             <img id='nav_img_naver' src={navImgNaver} />
             네이버 지도
           </div>
-          <div className="nav_box nav_tmap" onClick={() => openNavApp(1)}>
+          <div className="nav_box nav_tmap" onClick={() => openNavApp("tmap")}>
             <img id='nav_img_tmap' src={navImgTmap} />
             티맵
           </div>
-          <div className="nav_box nav_kakao" onClick={() => openNavApp(2)}>
+          <div className="nav_box nav_kakao" onClick={() => openNavApp("kakao")}>
             <img id='nav_img_kakao' src={navImgKakao} />
             카카오내비
           </div>
