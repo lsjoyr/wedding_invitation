@@ -27,12 +27,11 @@ import gallery_img22 from './assets/g22.jpg'
 import gallery_img23 from './assets/g23.jpg'
 import gallery_img24 from './assets/g24.jpg'
 import gallery_img25 from './assets/g25.jpg'
-import galleryBottomMarginImg from './assets/04.jpg'
 import locationTitleImg from './assets/05.jpg'
 import navImgNaver from './assets/nav_naver.png'
 import navImgTmap from './assets/nav_tmap.png'
 import navImgKakao from './assets/nav_kakao.png'
-import locationBottomMarginImg from './assets/06.jpg'
+import accountTitleImg from './assets/07.jpg'
 import downIconImg from './assets/down_icon.png'
 import kakaotalkIconImg from './assets/kakaotalk.png'
 import './App.css'
@@ -335,9 +334,11 @@ function App() {
     Kakao.Share.sendDefault({
       objectType: 'feed',
       content: {
-        title: '청첩장을 확인해보세요',
-        description: '승준 ❤️ 유림의 결혼식에 초대합니다',
-        imageUrl: window.location.origin + '/preview.png',
+        title: '승준 ❤️ 유림의 결혼식에 초대합니다',
+        description: '청첩장을 확인해보세요',
+        imageUrl: window.location.origin + '/preview.jpg',
+        imageWidth: 800,
+        imageHeight: 400,
         link: {
           mobileWebUrl: window.location.href,
           webUrl: window.location.href,
@@ -471,17 +472,6 @@ function App() {
             <button className="close-button" onClick={(e) => { e.stopPropagation(); closeExpanded(); }}>×</button>
           </div>
         )}
-        <div
-          className="bg-image-div"
-          style={{
-            width: '100%',
-            maxWidth: 430,
-            aspectRatio: 800 / 176,
-            backgroundImage: `url(${galleryBottomMarginImg})`,
-          }}
-          role="img"
-          aria-label="intro image"
-        />
       </div>
       <div id="location">
         <div
@@ -510,19 +500,19 @@ function App() {
             카카오내비
           </div>
         </div>
+      </div>
+      <div id="gift" className="gift-container">
         <div
           className="bg-image-div"
           style={{
             width: '100%',
             maxWidth: 430,
-            aspectRatio: 800 / 176,
-            backgroundImage: `url(${locationBottomMarginImg})`,
+            aspectRatio: 800 / 456,
+            backgroundImage: `url(${accountTitleImg})`,
           }}
           role="img"
           aria-label="intro image"
         />
-      </div>
-      <div id="gift" className="gift-container">
         <div
           className="account-toggle-button"
           onClick={toggleGroomAccountVisibility}

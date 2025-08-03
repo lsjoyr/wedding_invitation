@@ -261,16 +261,20 @@ p {
 
 .bottom {
   width: 100%;
+  background-color: #f2f3f4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 15px 0;
 }
 
 #kakaotalk {
-  margin: 20px 0;
   font-family: 'Noto Sans KR', sans-serif;
   text-align: center;
 }
 
 #copyright {
-  margin-bottom: 10px;
   font-family: 'Noto Sans KR', sans-serif;
   font-size: 10px;
   text-align: center;
