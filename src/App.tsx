@@ -304,8 +304,8 @@ function App() {
         />
         <Swiper
           initialSlide={index}
-          spaceBetween={10}
-          slidesPerView={1.4}
+          spaceBetween={25}
+          slidesPerView={1.5}
           centeredSlides={true}
           onSwiper={setThumbSwiper}
           onSlideChange={onThumbSlideChange}
@@ -353,7 +353,7 @@ function App() {
               onSlideChangeTransitionStart={onModalSlideChangeTransitionStart}
               onSwiper={setModalSwiper}
               loop={true}
-              style={{ width: '100%', height: '60%' }}
+              style={{ width: '100%', height: '66%', maxHeight: '630px' }}
             >
               {originalImages.map((img, i) => (
                 <SwiperSlide key={i} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
