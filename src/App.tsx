@@ -34,6 +34,7 @@ import navImgTmap from './assets/nav_tmap.png'
 import navImgKakao from './assets/nav_kakao.png'
 import locationBottomMarginImg from './assets/06.jpg'
 import downIconImg from './assets/down_icon.png'
+import kakaotalkIconImg from './assets/kakaotalk.png'
 import './App.css'
 
 import 'swiper/css';
@@ -297,7 +298,6 @@ function App() {
     }
   }
 
-
   const toggleGroomAccountVisibility = () => {
     const next = !isGroomAccountVisible
     setIsGroomAccountVisible(next)
@@ -329,6 +329,30 @@ function App() {
     } else {
       alert('클립보드 기능을 지원하지 않는 브라우저입니다.')
     }
+  }
+
+  const shareToKakaotalk = () => {
+    Kakao.Share.sendDefault({
+      objectType: 'feed',
+      content: {
+        title: '청첩장을 확인해보세요',
+        description: '승준 ❤️ 유림의 결혼식에 초대합니다',
+        imageUrl: window.location.origin + '/preview.png',
+        link: {
+          mobileWebUrl: window.location.href,
+          webUrl: window.location.href,
+        },
+      },
+      buttons: [
+        {
+          title: '청첩장 보기',
+          link: {
+            mobileWebUrl: window.location.href,
+            webUrl: window.location.href,
+          },
+        },
+      ],
+    })
   }
 
   return (
@@ -589,6 +613,11 @@ function App() {
               계좌번호 복사
             </button>
           </div>
+        </div>
+      </div>
+      <div className='bottom'>
+        <div id='kakaotalk' onClick={shareToKakaotalk}>
+          <img style={{ width: '13px', marginRight: '5px' }} src={kakaotalkIconImg} /> 카카오톡으로 공유하기
         </div>
       </div>
     </>
