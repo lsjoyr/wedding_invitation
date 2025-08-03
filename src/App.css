@@ -120,6 +120,7 @@ p {
 #nav_img_naver {
   width: 20px;
   vertical-align: -4px;
+  margin-right: 5px;
 }
 
 .nav_tmap {
@@ -130,6 +131,7 @@ p {
 #nav_img_tmap {
   width: 22px;
   vertical-align: -6px;
+  margin-right: 5px;
 }
 
 .nav_kakao {
@@ -139,6 +141,7 @@ p {
 #nav_img_kakao {
   width: 22px;
   vertical-align: -6px;
+  margin-right: 5px;
 }
 
 /* gift 영역 컨테이너 */
