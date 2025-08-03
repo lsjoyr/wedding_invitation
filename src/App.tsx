@@ -29,6 +29,9 @@ import gallery_img24 from './assets/g24.jpg'
 import gallery_img25 from './assets/g25.jpg'
 import galleryBottomMarginImg from './assets/04.jpg'
 import locationTitleImg from './assets/05.jpg'
+import navImgNaver from './assets/nav_naver.png'
+import navImgTmap from './assets/nav_tmap.png'
+import navImgKakao from './assets/nav_kakao.png'
 import locationBottomMarginImg from './assets/06.jpg'
 import downIconImg from './assets/down_icon.png'
 import './App.css'
@@ -49,6 +52,7 @@ declare global {
   }
 }
 
+declare const Kakao: any
 
 function App() {
   const [index, setIndex] = useState(0)
@@ -106,15 +110,12 @@ function App() {
       document.body.classList.remove('no-overscroll')
     }
 
-    const script = document.createElement('script')
-    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${import.meta.env.VITE_NAVER_MAP_CLIENT_ID}`
-    script.async = true
-    document.head.appendChild(script)
-
-    script.onload = () => {
+    const map_script = document.createElement('script')
+    map_script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${import.meta.env.VITE_NAVER_MAP_CLIENT_ID}`
+    map_script.async = true
+    document.head.appendChild(map_script)
+    map_script.onload = () => {
       if (window.naver && document.getElementById('map')) {
-        const lat = 37.560635
-        const lng = 126.967385
         const map = new window.naver.maps.Map('map', {
           center: new window.naver.maps.LatLng(lat, lng),
           zoom: 17
@@ -124,6 +125,16 @@ function App() {
           map,
         });
       }
+    }
+
+    const kakao_navi_script = document.createElement('script')
+    kakao_navi_script.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.5/kakao.min.js'
+    kakao_navi_script.integrity = 'sha384-dok87au0gKqJdxs7msEdBPNnKSRT+/mhTVzq+qOhcL464zXwvcrpjeWvyj1kCdq6'
+    kakao_navi_script.crossOrigin = 'anonymous'
+    kakao_navi_script.async = true
+    document.head.appendChild(kakao_navi_script)
+    kakao_navi_script.onload = () => {
+      Kakao.init(`${import.meta.env.VITE_KAKAO_APP_KEY}`)
     }
 
     // 확대 슬라이드 터치 인터벌 강제
@@ -136,7 +147,7 @@ function App() {
     }
 
     return () => {
-      document.head.removeChild(script)
+      document.head.removeChild(map_script)
       document.removeEventListener('contextmenu', disableRightClick)
       document.removeEventListener('touchmove', handleTouchMove)
       if (swiperEl) {
@@ -228,6 +239,64 @@ function App() {
       }, 200)
     }
   };
+
+  const dname = '루이비스웨딩 중구점'
+  const lat = 37.560635
+  const lng = 126.967385
+
+  function getMobileOS(): 'android' | 'ios' | 'unknown' {
+    const ua = navigator.userAgent.toLowerCase();
+    if (/android/.test(ua)) return 'android';
+    if (/iphone|ipad|ipod/.test(ua)) return 'ios';
+    return 'unknown';
+  }
+
+  function openNavApp(appName: string) {
+    const encodedName = encodeURIComponent(dname);
+    if (appName === "naver") {
+      const appUrl = `nmap://route/car?dlat=${lat}&dlng=${lng}&dname=${encodedName}`
+      const openedWindow = window.open(appUrl, '_blank');
+
+      const os = getMobileOS()
+      let fallbackUrl = ''
+      if (os === 'ios') {
+        fallbackUrl = 'https://apps.apple.com/kr/app/id311867728';
+      } else if (os === 'android') {
+        fallbackUrl = 'https://play.google.com/store/apps/details?id=com.nhn.android.nmap';
+      } else {
+        fallbackUrl = `https://map.naver.com/v5/search/${encodedName}`;
+      }
+
+      const fallback_timer = 3000
+      setTimeout(() => {
+        // 일부 브라우저에서는 앱이 열리면 openedWindow 가 null 이 아님에도 불구하고 닫히지 않음
+        if (openedWindow) {
+          try {
+            openedWindow.location.href = fallbackUrl;
+          } catch (e) {
+            // Safari나 일부 브라우저는 cross-origin 때문에 에러날 수 있으니 직접 열기
+            window.open(fallbackUrl, '_blank');
+          }
+        } else {
+          // pop-up blocker 때문에 열리지 않은 경우 등
+          window.open(fallbackUrl, '_blank');
+        }
+      }, fallback_timer);
+    }
+    else if (appName === "tmap") {
+      const appUrl = `https://apis.openapi.sk.com/tmap/app/routes?appKey=${import.meta.env.VITE_TMAP_APP_KEY}&name=${encodeURIComponent(dname)}&lon=${lng}&lat=${lat}`
+      window.open(appUrl, '_blank');
+    }
+    else if (appName === "kakao") {
+      Kakao.Navi.start({
+        name: dname,
+        x: lng,
+        y: lat,
+        coordType: 'wgs84',
+      });
+    }
+  }
+
 
   const toggleGroomAccountVisibility = () => {
     const next = !isGroomAccountVisible
@@ -403,6 +472,20 @@ function App() {
           aria-label="intro image"
         />
         <div id="map" style={{ width: '100%', height: '300px', maxWidth: 430, margin: '0 auto' }}></div>
+        <div id="nav">
+          <div className="nav_box nav_naver" onClick={() => openNavApp("naver")}>
+            <img id='nav_img_naver' src={navImgNaver} />
+            네이버 지도
+          </div>
+          <div className="nav_box nav_tmap" onClick={() => openNavApp("tmap")}>
+            <img id='nav_img_tmap' src={navImgTmap} />
+            티맵
+          </div>
+          <div className="nav_box nav_kakao" onClick={() => openNavApp("kakao")}>
+            <img id='nav_img_kakao' src={navImgKakao} />
+            카카오내비
+          </div>
+        </div>
         <div
           className="bg-image-div"
           style={{

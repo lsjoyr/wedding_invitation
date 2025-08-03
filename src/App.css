@@ -103,6 +103,55 @@ p {
   cursor: pointer;
 }
 
+#nav {
+  height: 47px;
+  width: 90%;
+  margin: 25px auto 0;
+}
+
+.nav_box {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 14PX;
+  text-align: center;
+  border-radius: 10px;
+  color: #333333;
+  border: 1px solid #E4E4E4;
+  width: 31%;
+  height: 45px;
+  line-height: 45px;
+}
+
+.nav_naver {
+  float: left;
+}
+
+#nav_img_naver {
+  width: 20px;
+  vertical-align: -4px;
+  margin-right: 5px;
+}
+
+.nav_tmap {
+  float: left;
+  margin-left: 2.5%;
+}
+
+#nav_img_tmap {
+  width: 22px;
+  vertical-align: -6px;
+  margin-right: 5px;
+}
+
+.nav_kakao {
+  float: right;
+}
+
+#nav_img_kakao {
+  width: 22px;
+  vertical-align: -6px;
+  margin-right: 5px;
+}
+
 /* gift 영역 컨테이너 */
 .gift-container {
   max-width: 430px;

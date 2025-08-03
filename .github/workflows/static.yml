@@ -39,7 +39,9 @@ jobs:
         run: npm ci
       - name: Create .env.production
         run: |
-          echo "VITE_NAVER_MAP_CLIENT_ID=${{ secrets.VITE_NAVER_MAP_CLIENT_ID }}" > .env.production
+          echo "VITE_NAVER_MAP_CLIENT_ID=${{ secrets.VITE_NAVER_MAP_CLIENT_ID }}" >> .env.production
+          echo "VITE_KAKAO_APP_KEY=${{ secrets.VITE_KAKAO_APP_KEY }}" >> .env.production
+          echo "VITE_TMAP_APP_KEY=${{ secrets.VITE_TMAP_APP_KEY }}" >> .env.production
       - name: Build
         run: npm run build
       - name: Setup Pages
