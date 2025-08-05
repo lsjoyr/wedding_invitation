@@ -335,7 +335,7 @@ function App() {
       objectType: 'feed',
       content: {
         title: '승준 ❤️ 유림의 결혼식에 초대합니다',
-        description: '청첩장을 확인해보세요',
+        description: '2025년 9월 6일 토요일 18:00',
         imageUrl: window.location.origin + '/preview.jpg',
         imageWidth: 800,
         imageHeight: 400,
