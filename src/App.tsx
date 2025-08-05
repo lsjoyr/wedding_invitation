@@ -610,7 +610,9 @@ function App() {
           <img style={{ width: '13px', marginRight: '5px' }} src={kakaotalkIconImg} /> 카카오톡으로 공유하기
         </div>
         <div id='copyright'>
-          Developed by Seungjoon. Designed by Yurim.
+          Developed by Seungjoon
+          <br />
+          Designed by Yurim
         </div>
       </div>
     </>
