@@ -28,6 +28,7 @@ import gallery_img23 from './assets/g23.jpg'
 import gallery_img24 from './assets/g24.jpg'
 import gallery_img25 from './assets/g25.jpg'
 import locationTitleImg from './assets/05.jpg'
+import locationAccessImg from './assets/06_2.jpg'
 import navImgNaver from './assets/nav_naver.png'
 import navImgTmap from './assets/nav_tmap.png'
 import navImgKakao from './assets/nav_kakao.png'
@@ -500,6 +501,17 @@ function App() {
             카카오내비
           </div>
         </div>
+        <div
+          className="bg-image-div"
+          style={{
+            width: '100%',
+            maxWidth: 430,
+            aspectRatio: 800 / 489,
+            backgroundImage: `url(${locationAccessImg})`,
+          }}
+          role="img"
+          aria-label="intro image"
+        />
       </div>
       <div id="gift" className="gift-container">
         <div
